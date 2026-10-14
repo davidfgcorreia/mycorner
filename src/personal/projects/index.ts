@@ -1,0 +1,7 @@
+/** The folders on the computer. `color` picks the tile tint: trail, day or coastal. */
+export type Project = { name: string; category: string; year: string; description: string; tags: string[]; color: 'trail' | 'day' | 'coastal'; mark: string; detail: string };
+export const projects: Project[] = [
+  { name: 'Trail Notes', category: 'Web app', year: '2026', description: 'A quiet space to collect outdoor routes, favorite places, and notes from the trail.', tags: ['React', 'Design', 'Maps'], color: 'trail', mark: '↗', detail: 'Sample project · A route journal concept bringing together an interactive map, saved walks, and personal trip notes. Built around a simple idea: spend less time planning and more time outside.' },
+  { name: 'Day by Day', category: 'Personal tool', year: '2025', description: 'A small habit tracker for making progress without making life complicated.', tags: ['TypeScript', 'Product'], color: 'day', mark: '✓', detail: 'Sample project · A daily habit tracker concept with weekly progress, flexible goals, and a calm interface. An exploration of how thoughtful defaults can make a tiny tool useful.' },
+  { name: 'Coastal', category: 'Creative experiment', year: '2025', description: 'An experiment in digital storytelling, inspired by time spent near the ocean.', tags: ['Three.js', 'Creative coding'], color: 'coastal', mark: '≈', detail: 'Sample project · An interactive coastal story concept, experimenting with 3D scenes, motion, and playful ways to navigate a website.' },
+];

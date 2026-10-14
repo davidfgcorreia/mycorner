@@ -1,0 +1,35 @@
+# Roadmap
+- [x] Flatten the project out of `public/`, bring the 3D models in as local files, and move all personal text into `src/personal/` (one folder per element).
+- [x] Name-tag header, entrance animations, pulsing hotspots, refreshed navigation; verified on desktop and phone in a real browser.
+- [x] Performance pass: baked meshes, static shadows, lazy 3D chunk, smooth board/tag transitions (HTML hidden while the camera moves).
+- [x] Documentation (`docs/`), CLAUDE.md, and a private GitHub repository.
+- [ ] Fill `src/personal/` with David's real details (profile first).
+- [x] Extend the top wooden beam slightly beyond the right pillar without moving the pillar or wall.
+- [x] Align the right pillar with the cabin edge and terminate the wall flush against its inner face.
+- [x] Smooth zoom without moving the cabin's page bounds, preserve green during transitions, and clear the right pillar from the wall end.
+- [x] Verify readable lime text against the soft green background and a lighter carpet that responds to room lighting.
+- [x] Restore warm cabin walls and green rug, remove the extra overview monitor plane, and bring the school book to the viewer-facing shelf end.
+- [x] Use soft sky blue even in dark preview mode, move the name to the top left, compact the bottom navigation/footer, and start with a closer cabin view.
+- [x] Switch the site to light blue, use white close-up backgrounds, and replace the black overview display with blank pale glass.
+- [x] Replace always-visible miniature panels with physical, unreadable room-view surfaces; black monitor until entered.
+- [x] Résumé on a real sheet fed out of the printer slot; print control outside the paper.
+- [x] Computer screen-on transition with the file browser fitted inside the bezel.
+- [x] School book lifts from the shelf, opens around its spine, turns pages, and returns.
+- [x] Achievement photos and work journal read on their physical surfaces; photo focus via camera.
+- [x] Hobby tags beside the gear and an About me notebook on the desk.
+- [x] Regression tests for surface alignment and room/reading visibility; verify desktop and phone.
+- [ ] Replace sample résumé, school, work, hobby and biography text with David's real details (waiting on David).
+- [x] Slim the printer to a home inkjet profile and clear the right-corner intersections.
+- [x] Lift the open book into a held reading position and align all close-up surfaces with their objects.
+- [x] Make fine room-view markings resolve into crisp, readable close-up content; verify interactions and layouts.
+- [x] Build minimalist personal website and movable warm miniature cabin.
+- [x] Add achievements, studies, hobbies, and computer project browsing using labeled sample content.
+- [x] Verify scene and interactions in the browser.
+- [x] Simplify header and brighten background.
+- [x] Add immersive object zoom, old Linux browser, photo achievement board, and school-history shelf.
+- [x] Add résumé printer and separate experience folder; update surfboard and fishing rod.
+- [x] Verify all updated interactions and phone layout.
+- [x] Move the viewer-facing printer to the lamp position and remove the lamp.
+- [x] Group sports equipment without right-corner intersections and relocate experience.
+- [x] Put interactive content on in-room screens, open books, printed paper, and boards.
+- [x] Verify in-room browsing, return navigation, placement, and narrow-screen readability.
