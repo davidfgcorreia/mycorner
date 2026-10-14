@@ -186,7 +186,7 @@ export function AchievementBoard({ ready, portal, onSelect, detail, onDetail }: 
   </group>;
 }
 
-export function WorkJournal({ ready, portal, onSelect }: Shared) {
+export function WorkJournal({ ready, portal, onSelect, detail, onDetail }: Shared & { detail: number | null; onDetail: (detail: number | null) => void }) {
   const c = useSceneColors();
   const page = useCanvasTexture(610, 720, drawJournal, c);
   return <group position={journal.placement.position} rotation={journal.placement.rotation} {...pick(() => onSelect('experience'))}>
@@ -194,7 +194,7 @@ export function WorkJournal({ ready, portal, onSelect }: Shared) {
     <Box position={[0, 0, -.009]} size={[journal.paper.width, journal.paper.height, .018]} color={c.paper} />
     <mesh position={[0, 0, .0004]}><planeGeometry args={[journal.paper.width, journal.paper.height]} /><meshStandardMaterial map={page} emissive={c.paper} emissiveMap={page} emissiveIntensity={.5} roughness={.9} /></mesh>
     <Box position={[0, .36, .021]} size={[.23, .07, .03]} color={c.metal} />
-    {ready && <SurfaceHtml face={primaryFace('experience')} portal={portal} className="surface-journal"><JournalContent /></SurfaceHtml>}
+    {ready && <SurfaceHtml face={primaryFace('experience')} portal={portal} className="surface-journal"><JournalContent detail={detail} onDetail={onDetail} /></SurfaceHtml>}
   </group>;
 }
 
@@ -233,7 +233,7 @@ export function ReadingObjects({ active, ready, detail, motion, portal, onSelect
     <PrinterWithSheet ready={live('resume')} motion={motion} {...shared} />
     <SchoolBook ready={live('studies')} motion={motion} {...shared} />
     <AchievementBoard ready={live('achievements')} detail={detail} onDetail={onDetail} {...shared} />
-    <WorkJournal ready={live('experience')} {...shared} />
+    <WorkJournal ready={live('experience')} detail={detail} onDetail={onDetail} {...shared} />
     <HobbyTags ready={live('hobbies')} detail={detail} onDetail={onDetail} {...shared} />
     <AboutNotebook ready={live('about')} motion={motion} {...shared} />
   </>;

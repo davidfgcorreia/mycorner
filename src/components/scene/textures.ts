@@ -2,7 +2,8 @@ import { useEffect, useMemo } from 'react';
 import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { tag } from '@/lib/reading-surfaces';
-import { achievementBoard, tagNote, type Achievement, type Hobby } from '@/personal';
+import { achievementBoard, experience, tagNote, type Achievement, type Hobby } from '@/personal';
+import { journalEntry, journalLayout } from '@/lib/journal-layout';
 import type { SceneColors } from './colors';
 
 /*
@@ -152,16 +153,23 @@ export const drawResume: Draw = (ctx, w, h, c) => {
 export const drawJournal: Draw = (ctx, w, h, c) => {
   const s = w / 610;
   paper(ctx, w, h, c);
-  rules(ctx, c.ink, 40, 150, 690, 34, 530, s);
-  const ox = 0, oy = 80;
-  const mark = (x: number, y: number, ww: number, hh: number, a: number): Bar => [ox + x, oy + y, ww, hh, a];
-  bars(ctx, c.ink, [mark(40, 48, 130, 9, .45), mark(40, 70, 200, 30, .85)], s);
-  for (let i = 0; i < 2; i++) {
-    const y = 160 + i * 132;
-    bars(ctx, c.green, [mark(40, y + 4, 22, 11, .8)], s);
-    bars(ctx, c.ink, [mark(82, y, 220, 18, .8), mark(82, y + 38, 360, 12, .4), mark(82, y + 66, 250, 12, .4)], s);
-  }
-  bars(ctx, c.ink, [mark(40, 590, 260, 9, .3)], s);
+  // The readable face begins 80 pixels below the full paper's top, clear of its clip.
+  const offset = 80;
+  text(ctx, 'WORK JOURNAL', 30, offset + 24, 550, 10, 14, 500, c['text-muted'], s);
+  text(ctx, 'Experience', 30, offset + 44, 550, 26, 30, 500, c.text, s);
+  experience.forEach((job, i) => {
+    const card = journalEntry(i);
+    const x = card.x + journalLayout.padding + 1;
+    const y = card.y + offset + journalLayout.padding + 1;
+    const width = card.width - 2 * journalLayout.padding - 2;
+    ctx.strokeStyle = c['text-muted'];
+    ctx.globalAlpha = .2;
+    ctx.strokeRect(card.x * s, (card.y + offset) * s, card.width * s, card.height * s);
+    ctx.globalAlpha = 1;
+    text(ctx, `${job.period}${job.organization ? ` · ${job.organization}` : ''}`, x, y, width, 12, 18, 400, c.text, s);
+    const titleHeight = text(ctx, job.title, x, y + 22, width, 16, 22, 500, c.text, s);
+    text(ctx, job.summary, x, y + 26 + titleHeight, width, 13, 18, 400, c['text-muted'], s);
+  });
 };
 
 export const drawBookIndex: Draw = (ctx, w, h, c) => {

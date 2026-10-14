@@ -1,7 +1,7 @@
 import { ArrowLeft, ChevronLeft, ChevronRight, LayoutGrid, Maximize2, Minus, Plus, Printer, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { corners, type Corner } from '@/lib/portfolio';
-import { achievements, hobbies } from '@/personal';
+import { achievements, hobbies, experience } from '@/personal';
 
 /* DOM controls layered over the cabin. Kept outside the scene JSX runtime so ARIA props survive. */
 type Props = {
@@ -22,9 +22,9 @@ export function SceneOverlay({ active, ready, detail, onDetail, onClose, onZoom,
     <Button variant="ghost" size="icon" aria-label="Reset view" title="Reset view" onClick={onReset}><RotateCcw /></Button>
     <Button variant="ghost" size="icon" aria-label="Fullscreen" title="Fullscreen" onClick={onFullscreen}><Maximize2 /></Button>
   </div>;
-  const labels = active === 'achievements' ? achievements.map(a => a.title) : active === 'hobbies' ? hobbies.map(h => h.title) : null;
-  const whole = active === 'achievements' ? 'Whole board' : 'All gear';
-  const unit = active === 'achievements' ? 'photo' : 'tag';
+  const labels = active === 'achievements' ? achievements.map(a => a.title) : active === 'hobbies' ? hobbies.map(h => h.title) : active === 'experience' ? experience.map(j => j.organization ?? j.title) : null;
+  const whole = active === 'achievements' || active === 'experience' ? 'Whole board' : 'All gear';
+  const unit = active === 'achievements' ? 'photo' : active === 'experience' ? 'experience' : 'tag';
   const step = (direction: number) => {
     if (!labels) return;
     const from = detail ?? (direction > 0 ? -1 : 0);
@@ -35,9 +35,10 @@ export function SceneOverlay({ active, ready, detail, onDetail, onClose, onZoom,
     <div className="reading-toolbar">
       <Button variant="outline" onClick={onClose}><ArrowLeft />Back to room</Button>
       {active === 'resume' && <Button variant="outline" onClick={() => window.print()}><Printer />Print résumé</Button>}
+      {active === 'experience' && detail !== null && experience[detail]?.projectUrl && <a className="experience-project-link" href={experience[detail].projectUrl} target="_blank" rel="noopener noreferrer">View project ↗</a>}
     </div>
     <p className="sr-only" aria-live="polite">{ready ? `${name} is open.` : `Opening ${name}…`}</p>
-    {labels && <div className="detail-stepper" role="group" aria-label={active === 'achievements' ? 'Photos on the board' : 'Gear tags'}>
+    {labels && <div className="detail-stepper" role="group" aria-label={active === 'achievements' ? 'Photos on the board' : active === 'experience' ? 'Work experience focus' : 'Gear tags'}>
       <Button variant="ghost" size="icon" aria-label={`Previous ${unit}`} onClick={() => step(-1)}><ChevronLeft /></Button>
       <span>{detail === null ? whole : labels[detail]}</span>
       <Button variant="ghost" size="icon" aria-label={`Next ${unit}`} onClick={() => step(1)}><ChevronRight /></Button>

@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, BookOpen, Folder, Home, Monitor } from 'lucide-r
 import { about, achievementBoard, achievements, education, educationNote, experience, hobbies, profile, projects, resume, tagNote } from '@/personal';
 import { boardCards, boardNote, type BoardItem } from '@/lib/board-layout';
 import { ProjectPage } from './ProjectPage';
+import { journalEntry } from '@/lib/journal-layout';
 
 /*
  * Readable content for the physical surfaces in the cabin. Each component fills exactly
@@ -117,12 +118,15 @@ export function BoardContent({ detail, onDetail }: { detail: number | null; onDe
   </Region>;
 }
 
-export function JournalContent() {
+export function JournalContent({ detail, onDetail }: { detail: number | null; onDetail: (detail: number | null) => void }) {
   return <Region label="Work experience" className="journal-surface">
     <span className="eyebrow">WORK JOURNAL</span>
     <h2>Experience</h2>
-    <ol>{experience.map((w, i) => <li key={w.title}><span>0{i + 1}</span><div><h3>{w.title}</h3><p>{w.text}</p></div></li>)}</ol>
-    <p className="sample-note">Sample work history · awaiting David’s details</p>
+    {experience.map((job, i) => <button key={`${job.period}-${job.title}`} type="button" className="journal-entry" style={{ left: journalEntry(i).x, top: journalEntry(i).y, width: journalEntry(i).width, height: journalEntry(i).height }} aria-label={`Focus ${job.organization ?? job.title} experience`} aria-pressed={detail === i} onClick={() => onDetail(detail === i ? null : i)}>
+      <span className="journal-meta">{job.period}{job.organization && ` · ${job.organization}`}</span>
+      <strong>{job.title}</strong>
+      <p>{job.summary}</p>
+    </button>)}
   </Region>;
 }
 

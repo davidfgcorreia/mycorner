@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import type { Corner } from './portfolio';
+import { journalEntry } from './journal-layout';
+import { experience } from '@/personal';
 
 /*
  * One source of truth for every readable object in the cabin.
@@ -131,6 +133,10 @@ export const readingObjects: Record<Corner, ReadingObject> = {
     placement: journal.placement,
     faces: [{ position: [0, -.04, .002], width: .61, height: .64, pixels: [610, 640] }],
     frame: [at([0, -.01, 0], .62, .72)],
+    details: experience.map((_, i) => {
+      const entry = journalEntry(i);
+      return at([(entry.x + entry.width / 2 - 305) / 1000, -.04 + (320 - entry.y - entry.height / 2) / 1000, .002], (entry.width + 32) / 1000, (entry.height + 44) / 1000);
+    }),
   },
   hobbies: {
     placement: { position: [0, 0, 0], rotation: [0, 0, 0] },

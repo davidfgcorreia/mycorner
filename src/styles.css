@@ -247,6 +247,7 @@ main { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 .surface-portal.is-moving { opacity: 0; transition: none; }
 .reading-toolbar { position: absolute; top: 16px; left: 24px; z-index: 30; display: flex; gap: 8px; }
 .reading-toolbar button { background: var(--reading-background); font-size: 12px; }
+.experience-project-link { display: inline-flex; align-items: center; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--reading-background); color: var(--primary); font-size: 12px; }
 .detail-stepper { position: absolute; left: 50%; bottom: 14px; z-index: 30; transform: translateX(-50%); display: flex; align-items: center; gap: 2px; padding: 4px; border: 1px solid var(--border); border-radius: 999px; background: var(--reading-background); box-shadow: var(--shadow-panel); font-size: 12px; white-space: nowrap; }
 .detail-stepper > span { min-width: 150px; text-align: center; }
 .detail-stepper button { border-radius: 999px; }
@@ -402,15 +403,15 @@ main { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 
 /* Work journal pinned on the wall. */
 .surface-journal { background: var(--scene-paper); }
-.journal-surface { display: flex; flex-direction: column; padding: 44px 40px 36px; }
-.journal-surface .eyebrow { font-size: 14px; }
-.journal-surface h2 { margin: 8px 0 18px; font-size: 38px; font-weight: 500; }
-.journal-surface ol { margin: 0; padding: 0; list-style: none; }
-.journal-surface li { display: flex; gap: 18px; padding: 18px 0; border-top: 1px solid var(--border); }
-.journal-surface li > span { padding-top: 5px; font-size: 16px; color: var(--primary); }
-.journal-surface h3 { margin: 0 0 6px; font-size: 24px; font-weight: 500; }
-.journal-surface p { margin: 0; font-size: 19px; line-height: 1.5; color: var(--muted-foreground); }
-.journal-surface .sample-note { margin-top: auto; font-size: 15px; }
+/* Card typography stays fixed: camera focus enlarges the selected entry. */
+.journal-surface { position: relative; padding: 24px 30px; }
+.journal-surface > .eyebrow { font-size: 10px; line-height: 14px; }
+.journal-surface h2 { margin: 6px 0 0; font-size: 26px; line-height: 30px; font-weight: 500; }
+.journal-entry { position: absolute; display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; padding: 12px; border: 1px solid var(--border); background: transparent; text-align: left; cursor: zoom-in; }
+.journal-entry[aria-pressed='true'] { cursor: zoom-out; }
+.journal-meta { display: block; font-size: 12px; line-height: 18px; color: var(--primary); }
+.journal-entry strong { display: block; margin: 4px 0; font-size: 16px; line-height: 22px; font-weight: 500; }
+.journal-entry p { margin: 0; font-size: 13px; line-height: 18px; color: var(--muted-foreground); }
 
 /* Hobby tags: the same luggage-tag outline and string hole as the paper tag in the room. */
 .surface-tag { background: transparent; clip-path: polygon(14% 0, 100% 0, 100% 100%, 14% 100%, 0 72%, 0 28%); -webkit-mask-image: radial-gradient(circle 14px at 42px 160px, transparent 13px, currentColor 14.5px); mask-image: radial-gradient(circle 14px at 42px 160px, transparent 13px, currentColor 14.5px); }
@@ -482,11 +483,6 @@ main { display: flex; flex-direction: column; flex: 1; min-height: 0; }
   .resume-sheet h3 { font-size: 28px; }
   .resume-sheet p { font-size: 27px; }
   .resume-sheet .sample-note { font-size: 19px; }
-  .journal-surface h2 { font-size: 46px; }
-  .journal-surface h3 { font-size: 30px; }
-  .journal-surface p { font-size: 26px; }
-  .journal-surface li > span { font-size: 22px; }
-  .journal-surface .sample-note { font-size: 20px; }
 }
 
 /* Printing uses a plain copy of the résumé instead of the transformed in-room sheet. */
