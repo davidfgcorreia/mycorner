@@ -433,10 +433,11 @@ main { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 .note-right h2 { margin: 0 0 18px; font-size: 40px; font-weight: 500; }
 .note-right p { margin: 0; font-size: 23px; line-height: 1.5; color: var(--muted-foreground); }
 .note-right p + p { margin-top: 16px; }
-.notebook-doodle { display: block; flex-shrink: 0; width: 100%; color: var(--muted-foreground); }
+.notebook-doodle { display: block; flex-shrink: 0; width: 100%; color: var(--scene-ink); opacity: .78; }
 .notebook-doodle.is-cover { height: 300px; margin-top: 32px; transform: rotate(-2deg); }
 .notebook-doodle.is-margin { height: 90px; margin-top: 18px; }
-.notebook-doodle .doodle-light { opacity: .55; }
+.notebook-doodle .doodle-light { opacity: .35; stroke-width: 1; }
+.notebook-doodle .doodle-retrace { opacity: .45; stroke-width: .8; }
 
 /* Portrait phones frame one page or one item, so type is larger in surface pixels. */
 @media (max-width: 699px), (max-aspect-ratio: 4/5) {
