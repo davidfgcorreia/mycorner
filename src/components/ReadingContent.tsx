@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 
 import { ArrowLeft, ArrowRight, BookOpen, Folder, Home } from 'lucide-react';
 import { about, achievementBoard, achievements, education, experience, hobbies, profile, projects, resume, tagNote } from '@/personal';
 import { boardCards, boardNote, type BoardItem } from '@/lib/board-layout';
+import { ProjectPage } from './ProjectPage';
 
 /*
  * Readable content for the physical surfaces in the cabin. Each component fills exactly
@@ -20,15 +21,21 @@ const slug = (name: string) => name.toLowerCase().replaceAll(' ', '-');
 export function ScreenContent() {
   const [selected, setSelected] = useState<number | null>(null);
   const [filter, setFilter] = useState('All projects');
+  const folderButtons = useRef<Map<number, HTMLButtonElement>>(new Map());
   const project = selected === null ? null : projects[selected];
   const visible = projects.map((p, i) => ({ p, i })).filter(({ p }) => filter === 'All projects' || p.category === filter);
   const choose = (value: string) => { setFilter(value); setSelected(null); };
+  const back = () => {
+    const previous = selected;
+    setSelected(null);
+    requestAnimationFrame(() => { if (previous !== null) folderButtons.current.get(previous)?.focus({ preventScroll: true }); });
+  };
   return <Region label={`File Manager — ${profile.firstName}’s projects`} className="os-screen">
-    <div className="os-window">
+    <div className={`os-window ${project ? 'os-project-open' : ''}`}>
       <div className="os-title"><Folder aria-hidden="true" /><span>File Manager — {home}</span><i aria-hidden="true"><b /><b /><b /></i></div>
       <div className="os-menu" aria-hidden="true"><span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Bookmarks</span><span>Help</span></div>
       <div className="os-toolbar">
-        <button type="button" aria-label="Back to projects" disabled={!project} onClick={() => setSelected(null)}><ArrowLeft /></button>
+        <button type="button" aria-label="Back to projects" disabled={!project} onClick={back}><ArrowLeft /></button>
         <button type="button" aria-label="Home folder" onClick={() => choose('All projects')}><Home /></button>
         <span className="os-location">{home}{project ? `/${slug(project.name)}` : ''}</span>
         <label className="os-filter"><span className="sr-only">Show projects</span><select value={filter} onChange={e => choose(e.target.value)}>{categories.map(c => <option key={c}>{c}</option>)}</select></label>
@@ -36,15 +43,10 @@ export function ScreenContent() {
       <div className="os-body">
         <nav className="os-sidebar" aria-label="Project places"><span>PLACES</span>{categories.map(item => <button type="button" key={item} aria-pressed={filter === item} onClick={() => choose(item)}><Folder aria-hidden="true" />{item}</button>)}</nav>
         <div className="os-main">
-          {project ? <article className="os-detail">
-            <div className={`os-art ${project.color}`} aria-hidden="true">{project.mark}</div>
-            <h2>{project.name}</h2>
-            <p>{project.detail}</p>
-            <div className="os-tags">{project.tags.map(t => <span key={t}>{t}</span>)}</div>
-          </article> : <div className="os-files">{visible.map(({ p, i }) => <button type="button" key={p.name} className="os-file" onClick={() => setSelected(i)}><Folder aria-hidden="true" /><strong>{p.name}</strong><small>{p.category}</small></button>)}</div>}
+          {project ? <ProjectPage key={selected} project={project} /> : <div className="os-files">{visible.map(({ p, i }) => <button ref={node => { if (node) folderButtons.current.set(i, node); else folderButtons.current.delete(i); }} type="button" key={p.name} className="os-file" onClick={() => setSelected(i)}><Folder aria-hidden="true" /><strong>{p.name}</strong><small>{p.category}</small></button>)}</div>}
         </div>
       </div>
-      <div className="os-status">{project ? 'README · Sample project' : `${visible.length} folders · Sample projects`}</div>
+      <div className="os-status">{project ? project.name : `${visible.length} folders`}</div>
     </div>
   </Region>;
 }

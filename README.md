@@ -22,6 +22,7 @@ src/
     CabinScene.tsx   the room, camera Director, hotspots
     SceneOverlay     DOM controls over the canvas
     ReadingContent   the readable surfaces (screen, book, board, ...)
+    ProjectPage      scrollable project details, media galleries and embedded demos
     scene/           3D objects, gear, baking, textures, colour tokens
     ui/              button (the only shadcn component kept)
   lib/
@@ -40,6 +41,7 @@ src/
 - [Style guide](docs/style-guide.md): colours, type, components, 3D look, motion
 - [Performance](docs/performance.md): budgets, rules, how it was measured
 - [Personal content](src/personal/README.md): what to edit to make it yours
+- [Projects](src/personal/projects/README.md): project descriptions, images, demo URLs and source links
 
 ## Personalizing
 

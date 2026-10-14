@@ -12,7 +12,7 @@ element of the cabin; edit its `index.ts` and the site updates.
 | `experience/` | Work journal on the wall | One entry per role |
 | `achievements/` | Photo board (3 photos) | Titles, captions, and `images/` |
 | `hobbies/` | Tags on the tennis bag, surfboard and rod | Titles and notes |
-| `projects/` | Folders on the computer | Name, category, tags, details |
+| `projects/` | Folders on the computer | Name, category, tags, details, images, demo and website URLs (see its README) |
 
 Import from the barrel, never from a subfolder: `import { profile } from '@/personal'`.
 
