@@ -77,12 +77,12 @@ export function BookSpread() {
       <small>{educationNote}</small>
     </div>
     <div className="book-page book-right">
-      <div key={chapter} className="page-turn" role="region" aria-label={`${school.title} details`} tabIndex={0}>
+      <div key={chapter} className="page-turn" role="region" aria-label={`${school.title} details`}>
         <span className="eyebrow">{school.period}</span>
         <h2>{school.title}</h2>
         <a className="book-institution" href={school.institutionUrl} target="_blank" rel="noopener noreferrer">{school.institution}</a>
-        <h3>{school.qualification}</h3>
-        <p>{school.description}</p>
+        {school.qualification && <h3>{school.qualification}</h3>}
+        {school.description && <p>{school.description}</p>}
         <dl className="book-results">{school.results.map(result => <div key={result.label}>
           <dt>{result.label}</dt>
           <dd>{result.value}{result.note && <span>{result.note}</span>}</dd>
