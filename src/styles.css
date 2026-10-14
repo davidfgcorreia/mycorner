@@ -285,9 +285,9 @@ main { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 .os-location { flex: 1; min-width: 0; padding: 7px 10px; border: 2px inset var(--linux-highlight); background: var(--card); font-size: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .os-filter { display: none; }
 .os-body { flex: 1; min-height: 0; display: flex; margin: 0 10px; border: 2px inset var(--linux-highlight); background: var(--card); }
-.os-sidebar { width: 236px; flex-shrink: 0; display: flex; flex-direction: column; gap: 2px; padding: 16px 10px; background: var(--linux-face); border-right: 1px solid var(--linux-shadow); }
-.os-sidebar > span { margin: 0 8px 10px; font-size: 13px; letter-spacing: .08em; color: var(--muted-foreground); }
-.os-sidebar button { gap: 10px; min-height: 44px; padding: 8px 10px; font-size: 17px; text-align: left; }
+.os-sidebar { width: 236px; min-height: 0; flex-shrink: 0; display: flex; flex-direction: column; gap: 2px; padding: 16px 10px; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; scrollbar-color: var(--linux-shadow) var(--linux-face); background: var(--linux-face); border-right: 1px solid var(--linux-shadow); }
+.os-sidebar > span { flex-shrink: 0; margin: 0 8px 10px; font-size: 13px; letter-spacing: .08em; color: var(--muted-foreground); }
+.os-sidebar button { flex-shrink: 0; gap: 10px; min-height: 44px; padding: 8px 10px; font-size: 17px; text-align: left; }
 .os-sidebar svg { width: 20px; height: 20px; flex-shrink: 0; }
 .os-sidebar button[aria-pressed='true'] { background: var(--linux-selection); color: var(--linux-selection-text); }
 .os-main { flex: 1; min-width: 0; overflow: auto; padding: 22px; }
