@@ -371,9 +371,18 @@ main { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 .book-index button[aria-current='true'] { background: var(--accent); color: var(--primary); }
 .book-index span { font-size: 17px; color: var(--primary); }
 .book-page small { margin-top: auto; font-size: 16px; color: var(--muted-foreground); }
-.page-turn { flex: 1; display: flex; flex-direction: column; transform-origin: left center; animation: page-turn .5s ease-out; }
+.page-turn { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding-right: 12px; display: flex; flex-direction: column; transform-origin: left center; animation: page-turn .5s ease-out; scrollbar-color: var(--border) var(--scene-paper); }
+.page-turn:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; }
+.book-institution { font-size: 23px; line-height: 1.4; color: var(--primary); text-underline-offset: 4px; }
+.book-page h3 { margin: 22px 0 12px; font-size: 27px; line-height: 1.3; font-weight: 500; }
+.book-results { margin: 24px 0 0; }
+.book-results > div { border-top: 1px solid var(--border); padding: 14px 0; }
+.book-results dt { font-size: 20px; color: var(--muted-foreground); }
+.book-results dd { margin: 5px 0 0; font-size: 32px; font-weight: 600; }
+.book-results dd span { display: block; margin-top: 6px; font-size: 20px; line-height: 1.5; font-weight: 400; color: var(--muted-foreground); }
+.book-research { border-top: 1px solid var(--border); margin-top: 18px; }
 @keyframes page-turn { from { transform: perspective(1800px) rotateY(-26deg); opacity: .2; } }
-.book-pagination { display: flex; align-items: center; justify-content: space-between; margin-top: 18px; font-size: 20px; }
+.book-pagination { display: flex; flex-shrink: 0; align-items: center; justify-content: space-between; margin-top: 18px; font-size: 20px; }
 .book-pagination button { width: 56px; height: 56px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 50%; background: transparent; }
 .book-pagination button:disabled { opacity: .35; cursor: default; }
 .book-pagination svg { width: 26px; height: 26px; }

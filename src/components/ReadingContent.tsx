@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { ArrowLeft, ArrowRight, BookOpen, Folder, Home, Monitor } from 'lucide-react';
-import { about, achievementBoard, achievements, education, experience, hobbies, profile, projects, resume, tagNote } from '@/personal';
+import { about, achievementBoard, achievements, education, educationNote, experience, hobbies, profile, projects, resume, tagNote } from '@/personal';
 import { boardCards, boardNote, type BoardItem } from '@/lib/board-layout';
 import { ProjectPage } from './ProjectPage';
 
@@ -74,13 +74,23 @@ export function BookSpread() {
       <span className="eyebrow">{profile.name.toUpperCase()}</span>
       <h2>School<br />history.</h2>
       <div className="book-index">{education.map((s, i) => <button type="button" key={s.title} aria-current={chapter === i} onClick={() => setChapter(i)}><span>0{i + 1}</span>{s.title}</button>)}</div>
-      <small>Sample chapters</small>
+      <small>{educationNote}</small>
     </div>
     <div className="book-page book-right">
-      <div key={chapter} className="page-turn">
+      <div key={chapter} className="page-turn" role="region" aria-label={`${school.title} details`} tabIndex={0}>
         <span className="eyebrow">{school.period}</span>
         <h2>{school.title}</h2>
+        <a className="book-institution" href={school.institutionUrl} target="_blank" rel="noopener noreferrer">{school.institution}</a>
+        <h3>{school.qualification}</h3>
         <p>{school.description}</p>
+        <dl className="book-results">{school.results.map(result => <div key={result.label}>
+          <dt>{result.label}</dt>
+          <dd>{result.value}{result.note && <span>{result.note}</span>}</dd>
+        </div>)}</dl>
+        {school.research && <section className="book-research" aria-label="Current thesis">
+          <h3>{school.research.title}</h3>
+          <p>{school.research.description}</p>
+        </section>}
         <div className="ruled-paper" />
       </div>
       <div className="book-pagination">
