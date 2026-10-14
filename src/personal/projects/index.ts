@@ -3,8 +3,11 @@ import decisionMap from "./images/hackcity-map.webp";
 import fieldApp from "./images/hackcity-field.webp";
 import sonarMap from "./images/captain-sonar.webp";
 import systemsContext from "./images/systems-context.svg";
+import afterdarkDesktop from "./images/afterdark-desktop.webp";
+import afterdarkMobile from "./images/afterdark-mobile.webp";
+import afterdarkVip from "./images/afterdark-vip-summary.webp";
 
-/** URL fields use HTTPS. demoUrl is embeddable; demoExternalUrl is its share link. */
+/** Links use HTTPS; recorded demos may use local /projects/ media. demoExternalUrl is a share link. */
 export type Project = {
   name: string;
   category: string;
@@ -15,7 +18,7 @@ export type Project = {
   highlights?: string[];
   images?: { src: string; alt: string; caption?: string }[];
   demoUrl?: string;
-  demoType?: "video" | "website";
+  demoType?: "video" | "website" | "recording";
   demoExternalUrl?: string;
   websiteUrl?: string;
   sourceUrl?: string;
@@ -25,6 +28,41 @@ const github = "https://github.com/davidfgcorreia";
 
 /** Descriptions and media checked against the linked public repositories, October 2026. */
 export const projects: Project[] = [
+  {
+    name: "First Floor Afterdark",
+    category: "Web app",
+    year: "2026",
+    description:
+      "A bilingual nightlife website concept with event discovery and an interactive VIP booking flow.",
+    tags: ["Next.js", "React", "TypeScript", "GSAP", "Tailwind CSS"],
+    detail:
+      "A portfolio concept inspired by First Floor Club in Faro. The site brings together animated navigation, event sections, Portuguese and English content, and a VIP booking summary. It is a demonstration with sample events and prices, rather than an official club website.",
+    highlights: [
+      "Explore responsive desktop and phone layouts with animated navigation.",
+      "Switch between Portuguese and English content.",
+      "Follow the VIP booking flow in a recorded walkthrough using synthetic visitor details.",
+    ],
+    images: [
+      {
+        src: afterdarkDesktop,
+        alt: "First Floor Afterdark desktop homepage",
+        caption: "Desktop homepage · nightlife concept",
+      },
+      {
+        src: afterdarkMobile,
+        alt: "First Floor Afterdark mobile homepage",
+        caption: "Phone layout · responsive navigation",
+      },
+      {
+        src: afterdarkVip,
+        alt: "First Floor Afterdark VIP booking summary with demonstration visitor details",
+        caption: "VIP booking summary · demonstration details",
+      },
+    ],
+    demoUrl: "/projects/first-floor-afterdark/demo.mp4",
+    demoType: "recording",
+    sourceUrl: `${github}/first-floor-afterdark`,
+  },
   {
     name: "Cascais Micromobility",
     category: "Web app",

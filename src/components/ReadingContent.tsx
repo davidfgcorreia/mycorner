@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
-import { ArrowLeft, ArrowRight, BookOpen, Folder, Home } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BookOpen, Folder, Home, Monitor } from 'lucide-react';
 import { about, achievementBoard, achievements, education, experience, hobbies, profile, projects, resume, tagNote } from '@/personal';
 import { boardCards, boardNote, type BoardItem } from '@/lib/board-layout';
 import { ProjectPage } from './ProjectPage';
@@ -32,7 +32,7 @@ export function ScreenContent() {
   };
   return <Region label={`File Manager — ${profile.firstName}’s projects`} className="os-screen">
     <div className={`os-window ${project ? 'os-project-open' : ''}`}>
-      <div className="os-title"><Folder aria-hidden="true" /><span>File Manager — {home}</span><i aria-hidden="true"><b /><b /><b /></i></div>
+      <div className="os-title"><Monitor aria-hidden="true" /><span>File Manager — {home}</span><i aria-hidden="true"><b /><b /><b /></i></div>
       <div className="os-menu" aria-hidden="true"><span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Bookmarks</span><span>Help</span></div>
       <div className="os-toolbar">
         <button type="button" aria-label="Back to projects" disabled={!project} onClick={back}><ArrowLeft /></button>

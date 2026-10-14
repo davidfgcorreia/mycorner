@@ -21,6 +21,26 @@ const project: Project = {
 };
 
 describe("Computer project viewer", () => {
+  it("mounts a recorded demo only when selected and removes it on leaving the preview", () => {
+    render(
+      <ProjectPage
+        project={{
+          ...project,
+          demoType: "recording",
+          demoUrl: "/projects/first-floor-afterdark/demo.mp4",
+        }}
+      />,
+    );
+    expect(screen.queryByLabelText("Test site demo")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Demo" }));
+    expect(screen.getByLabelText("Test site demo")).toHaveAttribute("controls");
+    expect(screen.getByLabelText("Test site demo")).toHaveAttribute(
+      "src",
+      "/projects/first-floor-afterdark/demo.mp4",
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Overview" }));
+    expect(screen.queryByLabelText("Test site demo")).not.toBeInTheDocument();
+  });
   it("opens real project media, resets the view when reopened, and restores folder focus", async () => {
     render(<ScreenContent />);
     fireEvent.click(screen.getByRole("button", { name: "Cascais Micromobility Web app" }));

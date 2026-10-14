@@ -23,7 +23,10 @@ export function ProjectPage({ project }: { project: Project }) {
   const images = project.images ?? [];
   const website = webUrl(project.websiteUrl);
   const source = webUrl(project.sourceUrl);
-  const preview = webUrl(project.demoUrl) ?? website;
+  const recording = project.demoType === "recording";
+  const localRecording =
+    recording && project.demoUrl?.startsWith("/projects/") ? project.demoUrl : undefined;
+  const preview = localRecording ?? webUrl(project.demoUrl) ?? website;
   const externalPreview = webUrl(project.demoExternalUrl) ?? preview;
   const hasPreview = Boolean(preview);
   const previewLabel = project.demoUrl ? "Demo" : "Live site";
@@ -91,7 +94,17 @@ export function ProjectPage({ project }: { project: Project }) {
       >
         {view === "overview" && (
           <div className="project-overview">
-            {images[0] && <img className="project-hero" src={images[0].src} alt={images[0].alt} />}
+            {images[0] && (
+              <a
+                className="project-image-link"
+                href={images[0].src}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Open full-size image: ${images[0].alt}`}
+              >
+                <img className="project-hero" src={images[0].src} alt={images[0].alt} />
+              </a>
+            )}
             <p className="project-intro">{project.description}</p>
             <div className="os-tags">
               {project.tags.map((tag) => (
@@ -125,7 +138,15 @@ export function ProjectPage({ project }: { project: Project }) {
         {view === "images" && images[image] && (
           <div className="project-gallery">
             <figure>
-              <img src={images[image].src} alt={images[image].alt} />
+              <a
+                className="project-image-link"
+                href={images[image].src}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Open full-size image: ${images[image].alt}`}
+              >
+                <img src={images[image].src} alt={images[image].alt} />
+              </a>
               <figcaption>{images[image].caption ?? images[image].alt}</figcaption>
             </figure>
             {images.length > 1 && (
@@ -152,7 +173,9 @@ export function ProjectPage({ project }: { project: Project }) {
           </div>
         )}
         {view === "preview" && (
-          <div className={`project-preview ${project.demoType === "video" ? "is-video" : ""}`}>
+          <div
+            className={`project-preview ${project.demoType === "video" || recording ? "is-video" : ""}`}
+          >
             <div className="project-preview-note">
               {previewLabel} preview
               {externalPreview && (
@@ -161,15 +184,25 @@ export function ProjectPage({ project }: { project: Project }) {
                 </a>
               )}
             </div>
-            <iframe
-              title={`${project.name} ${previewLabel.toLowerCase()}`}
-              src={preview}
-              sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allow="fullscreen; encrypted-media; picture-in-picture"
-              allowFullScreen
-            />
-            {preview && (
+            {recording ? (
+              <video
+                src={preview}
+                controls
+                playsInline
+                preload="metadata"
+                aria-label={`${project.name} demo`}
+              />
+            ) : (
+              <iframe
+                title={`${project.name} ${previewLabel.toLowerCase()}`}
+                src={preview}
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allow="fullscreen; encrypted-media; picture-in-picture"
+                allowFullScreen
+              />
+            )}
+            {preview && !recording && (
               <p className="project-embed-help">
                 If this site does not allow embedded viewing, use “Open in new tab” above.
               </p>
