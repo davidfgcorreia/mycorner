@@ -141,6 +141,6 @@ export function TagContent({ index, focused, onFocus }: { index: number; focused
 export function NotebookSpread() {
   return <Region label="About me" className="notebook-spread">
     <div className="note-page note-left"><span className="note-mark">{profile.monogram}.</span><h2>About me</h2><small>{about.coverNote}</small></div>
-    <div className="note-page note-right"><h2>{about.greeting}</h2><p>{about.text}</p><div className="ruled-paper" /><p className="sample-note">Sample biography · awaiting David’s details</p></div>
+    <div className="note-page note-right"><h2>{about.greeting}</h2>{about.paragraphs.map(text => <p key={text}>{text}</p>)}<div className="ruled-paper" /></div>
   </Region>;
 }

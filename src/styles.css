@@ -431,8 +431,8 @@ main { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 .note-left h2 { margin: 30px 0 0; font-size: 46px; font-weight: 500; }
 .note-left small { margin-top: auto; font-size: 16px; color: var(--muted-foreground); }
 .note-right h2 { margin: 0 0 18px; font-size: 40px; font-weight: 500; }
-.note-right p { margin: 0; font-size: 25px; line-height: 1.6; color: var(--muted-foreground); }
-.note-right .sample-note { margin-top: 18px; font-size: 16px; }
+.note-right p { margin: 0; font-size: 23px; line-height: 1.5; color: var(--muted-foreground); }
+.note-right p + p { margin-top: 16px; }
 
 /* Portrait phones frame one page or one item, so type is larger in surface pixels. */
 @media (max-width: 699px), (max-aspect-ratio: 4/5) {
