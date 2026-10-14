@@ -5,6 +5,9 @@ does almost no work.
 
 ## Budgets (desktop, idle room)
 
+The measurements below are the October 2026 baseline. Renderer and bundle budgets have not
+been re-profiled after the latest portfolio content and notebook changes.
+
 | Metric | Budget | Measured (Oct 2026) |
 | --- | --- | --- |
 | Draw calls per frame | ≤ 120 | ~100 |
@@ -36,6 +39,9 @@ does almost no work.
   (that is why `lib/board-layout.ts` exists). Check after changes:
   `npx vite build` and confirm `WebGLRenderer` appears only in the `CabinScene-*.js` chunk.
 - Images: WebP, about 3× their largest on-screen CSS size (board photos: 864px wide).
+- Project previews use compact display bounds and open the original image on demand.
+  Local video demos mount only in the selected Demo view and use `preload="metadata"`.
+- Biography sketches are lightweight SVG paths and add no raster image requests.
 - Only `ui/button.tsx` from shadcn is kept; Tailwind scans `src`, so unused components bloat CSS.
 
 **HTML over the scene**
@@ -44,6 +50,7 @@ does almost no work.
   `architecture.md`).
 - Avoid `box-shadow`/`filter` transitions inside readable surfaces.
 - Don't `scale()` `.scene-wrap` or the canvas will size itself wrong.
+- Work entry focus uses the Director and camera framing, not CSS enlargement of the board.
 
 ## Measuring
 

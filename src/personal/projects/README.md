@@ -12,19 +12,31 @@ the original team's Figma prototype still requires login.
 Private source repositories are not linked from the public portfolio.
 The local WebP images come from the Hack the City screenshot
 gallery and the Captain Sonar map asset; they are real repository media.
+First Floor Afterdark links to the public `first-floor-afterdark` repository and includes
+three screenshots and a local recorded walkthrough. Its branding and media credits are
+retained in `images/afterdark-credits.md`; it is a demonstration, not an official club site.
 
 Each project has a name, category, year, description, detail, and tags. Optional fields:
 
 - `highlights`: a list of features shown in the overview.
 - `images`: `{ src, alt, caption? }` entries. Import images from this folder's `images/`.
 - `websiteUrl`: an HTTPS website, shown in the monitor's Live site view.
-- `demoUrl`: an HTTPS embeddable demo or video URL, shown in the Demo view.
-- `demoType`: use `"video"` to fit the video player and its controls inside the monitor.
+- `demoUrl`: an HTTPS embeddable demo/video URL, or a local `/projects/` path for a recording.
+- `demoType`: `"video"` for an embedded video, `"website"` for a website, or `"recording"`
+  for a native video player. Video previews fit inside the monitor.
 - `demoExternalUrl`: the share URL for a demo whose embed URL differs (such as YouTube).
 - `sourceUrl`: an HTTPS repository link.
 
 A YouTube demo should use `https://www.youtube-nocookie.com/embed/VIDEO_ID` for
 `demoUrl` and the normal share link for `demoExternalUrl`. Only selected previews mount
-an iframe. Some hosts block embedding; the preview always includes a new-tab fallback.
+an iframe or native video. Some hosts block embedding; the preview includes a new-tab fallback.
 Hosted URLs are added only when a public deployment is verified. The IPM experiment
 is served through GitHub Pages.
+
+Store recorded demos in `public/projects/<project>/`. First Floor Afterdark uses
+`/projects/first-floor-afterdark/demo.mp4`; the player has controls, plays inline on phones,
+and stops when leaving the Demo view. Keep recordings small and retain source attribution.
+
+Image previews are centered and sized to fit the screen, including portrait screenshots.
+They open the full-size asset in a new tab on click. Category navigation has its own desktop
+scrollbar; phones use the project type selector.

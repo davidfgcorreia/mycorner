@@ -70,6 +70,19 @@ to the `names` list in `colors.ts`.
 - **Corner nav buttons**: transparent until hover; on hover a white card, a 2px green underline
   sweeping in from the left, and the icon tilting slightly.
 - **Readable surfaces**: paper-white, generous padding, deep-lime headings, muted body text.
+- **Computer**: project category navigation scrolls independently of the folder grid. Image
+  previews preserve their aspect ratio and stay small; clicking opens the full-size asset.
+  Reading documents may scroll inside the screen. Recorded demos use native video controls.
+- **School book**: concise chapters with grades explicitly shown out of 20. Fit all content
+  on each page; shorten prose rather than adding scrolling.
+- **Work board**: show every role in a two-by-two grid. Small fixed type is intentional in
+  the overview; clicking an entry zooms the camera for reading. Keep HTML, canvas text and
+  camera rectangles aligned through the shared journal layout.
+- **Biography notebook**: short paragraphs, a sketch on the left and another below the text.
+  Drawings use uneven strokes, unfinished outlines and faint retracing in `--scene-ink`.
+  Keep them decorative (`aria-hidden`) and leave enough room to avoid clipping or scrolling.
+- **Browser icon**: the cabin SVG favicon has an ICO fallback. The computer title bar uses
+  a monitor icon.
 
 ## 3D look
 
@@ -114,5 +127,6 @@ both:
 
 - Same text, from the same data (`src/personal`).
 - Same layout numbers: the draw functions in `scene/textures.ts` are commented with the CSS
-  rule they mirror (`.board-card`, `.board-note`, `.tag-surface`). Change one, change the other.
+  rule they mirror (`.board-card`, `.board-note`, `.journal-entry`, `.tag-surface`). Change one,
+  change the other. Work entry rectangles come from `journal-layout.ts`.
 - Same colours (unlit, untone-mapped materials), same pin (an 18px flat disc on the card's top edge).
