@@ -155,7 +155,7 @@ function Room({ onSelect }: { onSelect: Select }) {
       <Prop url={deskUrl} position={[-1.05, .05, -1.7]} size={2.55} />
       <Prop url={screenUrl} position={[-1.2, 1.4, -1.82]} size={.85} onClick={() => onSelect('projects')} />
       <Prop url={keyboardUrl} position={[-1.2, 1.41, -1.27]} size={.65} onClick={() => onSelect('projects')} />
-      <Prop url={chairUrl} position={[-1.06, .05, -.5]} size={1.35} rotation={[0, Math.PI - .38, 0]} />
+      <Prop url={chairUrl} position={[-1.06, .05, -.5]} size={1.8} rotation={[0, Math.PI - .38, 0]} />
       <Prop url={plantUrl} position={[-2.03, 1.41, -1.85]} size={.45} />
       <Prop url={booksUrl} position={[-2.65, 2.25, 1.2]} size={.8} rotation={[0, Math.PI / 2, 0]} onClick={() => onSelect('studies')} />
       <Prop url={tallPlantUrl} position={[-2.2, .05, 1.75]} size={1.3} />

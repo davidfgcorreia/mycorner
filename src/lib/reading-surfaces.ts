@@ -21,6 +21,8 @@ export type ReadingObject = {
   details?: Rect[];
   narrowDetails?: Rect[];
   defaultDetail?: 'always' | 'narrow';
+  /** Camera distance from the frame, when something stands in front of the object (default camera.distance). */
+  distance?: number;
 };
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
@@ -112,6 +114,8 @@ export const readingObjects: Record<Corner, ReadingObject> = {
     placement: monitor.placement,
     faces: [{ position: [0, 0, .0008], width: .78, height: .46, pixels: [1000, 590] }],
     frame: [at([0, 0, 0], .87, .55)],
+    // The desk chair stands about 1.3 in front of the screen; keep the camera between them.
+    distance: .7,
   },
   resume: {
     placement: printer.placement,
@@ -209,7 +213,7 @@ export type CameraPose = { position: THREE.Vector3; look: THREE.Vector3; up: THR
 export function cameraView(corner: Corner, detail: number | null, size: { width: number; height: number }): CameraPose {
   const f = frameView(corner, detail, isNarrow(size.width, size.height));
   const zoom = Math.min((size.width - camera.padX * 2) / f.width, (size.height - camera.padY * 2) / f.height) / camera.margin;
-  return { position: f.center.clone().addScaledVector(f.normal, camera.distance), look: f.center, up: f.up, zoom };
+  return { position: f.center.clone().addScaledVector(f.normal, readingObjects[corner].distance ?? camera.distance), look: f.center, up: f.up, zoom };
 }
 export function roomView(size: { width: number; height: number }, zoomFactor: number): CameraPose {
   return { position: new THREE.Vector3(...camera.room), look: new THREE.Vector3(...camera.roomLook), up: new THREE.Vector3(0, 1, 0), zoom: Math.min(size.width / 10.5, size.height / 7.5) * zoomFactor };

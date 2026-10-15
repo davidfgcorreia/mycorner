@@ -1,0 +1,7 @@
+// Read by Nitro at build time and merged into .output/server/wrangler.json.
+// The build sets the entry point and assets. The compatibility date is pinned so builds are
+// reproducible and never ahead of Cloudflare's clock; bump it deliberately.
+{
+  "name": "davidcorreia",
+  "compatibility_date": "2026-10-01"
+}

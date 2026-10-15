@@ -14,8 +14,13 @@ existing output. No production deployment was performed during the October 15 up
 - `.output/server/wrangler.json`: Worker configuration and the static asset binding.
 - `.wrangler/deploy/config.json`: a pointer to the generated Wrangler configuration.
 
-The current generated Worker name is `davidfgcorreia-mycorner`. Inspect the generated
-configuration after building; do not edit or commit build output as persistent configuration.
+The Worker name (`davidcorreia`) and a pinned compatibility date are set in `wrangler.jsonc`
+at the project root; Nitro merges that file into the generated configuration. The site is
+served at `https://davidcorreia.<account subdomain>.workers.dev`; the subdomain is an
+account setting in the Cloudflare dashboard, not part of the repository. Cloudflare rejects a
+compatibility date later than its own clock, so bump the pinned date deliberately rather than
+using today's. Inspect the generated configuration after building; do not edit or commit build
+output as persistent configuration.
 
 ## Deploy from a local checkout
 
