@@ -135,7 +135,9 @@ export const readingObjects: Record<Corner, ReadingObject> = {
     frame: [at([0, -.01, 0], .62, .72)],
     details: experience.map((_, i) => {
       const entry = journalEntry(i);
-      return at([(entry.x + entry.width / 2 - 305) / 1000, -.04 + (320 - entry.y - entry.height / 2) / 1000, .002], (entry.width + 32) / 1000, (entry.height + 44) / 1000);
+      // A gentle step in from the whole board (≈1.4×), centred on the entry and kept on the paper.
+      const h = .5, centre = -.04 + (320 - entry.y - entry.height / 2) / 1000;
+      return at([0, Math.min(.36 - .01 - h / 2, Math.max(-.36 - .01 + h / 2, centre)), .002], .62, h);
     }),
   },
   hobbies: {

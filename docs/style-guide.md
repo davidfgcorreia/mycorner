@@ -45,13 +45,25 @@ to the `names` list in `colors.ts`.
 
 ## Typography
 
-- One family: **DM Sans** (Google Fonts, weights 400/500/600/700), with `sans-serif` fallback.
-- Headings use weight 500; strong UI labels 500–600. No letter-spacing except small
-  uppercase eyebrows (`.12em`).
-- The computer screen is the one exception: a retro Linux file manager in
-  `'Liberation Sans', Arial`.
-- Text drawn into canvas textures uses DM Sans at the **same sizes and line heights as the CSS**
-  it stands in for (see "HTML ↔ texture parity").
+- The page chrome (header, navigation, toolbars, résumé) uses **DM Sans** (400/500/600/700).
+- Each kind of object has its own Google Font, set through tokens in `styles.css`:
+
+  | Object | Token | Family |
+  | --- | --- | --- |
+  | Notebook (About me) | `--font-hand` | Caveat, handwriting |
+  | School book | `--font-book` | EB Garamond, printed book |
+  | Work journal | `--font-typed` | Courier Prime, typed log |
+  | Photo board | `--font-marker` | Kalam, marker on cards |
+  | Hobby tags | `--font-label` | Patrick Hand, hand-lettered labels |
+  | Computer | — | `'Liberation Sans', Arial`, a retro Linux file manager |
+
+- Text drawn into canvas textures uses the **same family, sizes and line heights as the CSS**
+  it stands in for (`faces` in `scene/textures.ts`; see "HTML ↔ texture parity"). Use only weights
+  the family ships (Kalam 400/700, Courier Prime 400/700, Patrick Hand 400).
+- The school book turns chapters by flipping the right page over the spine (`.book-leaf`, 1.1 s,
+  one continuous ease). The leaf is two-sided (its back is a copy of the index page, so the left
+  page reads the same throughout) and bends at the middle (`.leaf-fold`) so it never goes edge-on
+  and vanishes. Check every frame when changing it. Reduced motion skips it.
 
 ## Layout
 
@@ -75,8 +87,8 @@ to the `names` list in `colors.ts`.
   Reading documents may scroll inside the screen. Recorded demos use native video controls.
 - **School book**: concise chapters with grades explicitly shown out of 20. Fit all content
   on each page; shorten prose rather than adding scrolling.
-- **Work board**: show every role in a two-by-two grid. Small fixed type is intentional in
-  the overview; clicking an entry zooms the camera for reading. Keep HTML, canvas text and
+- **Work board**: every role in one column, newest first, on a timeline. Clicking an entry steps
+  the camera in gently (≈1.4×) and outlines the entry; the type stays the same as the overview. Keep HTML, canvas text and
   camera rectangles aligned through the shared journal layout.
 - **Biography notebook**: short paragraphs, a sketch on the left and another below the text.
   Drawings use uneven strokes, unfinished outlines and faint retracing in `--scene-ink`.

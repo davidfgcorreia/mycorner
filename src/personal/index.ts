@@ -1,6 +1,6 @@
 export { profile } from './profile';
 export { about } from './about';
-export { resume } from './resume';
+export { resume, type ResumeEntry } from './resume';
 export { education, educationNote, type Chapter } from './education';
 export { experience, type Job } from './experience';
 export { achievements, board as achievementBoard, type Achievement } from './achievements';

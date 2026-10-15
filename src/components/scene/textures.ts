@@ -32,7 +32,9 @@ export function paperMaterial(map: THREE.Texture, c: SceneColors, extra: THREE.M
   return new THREE.MeshStandardMaterial({ map, emissive: new THREE.Color(c.paper), emissiveMap: map, emissiveIntensity: .5, roughness: .9, ...extra });
 }
 
-const fonts = ['400 18px "DM Sans"', '500 22px "DM Sans"'];
+/** Typefaces for real text, matching the `--font-*` tokens in styles.css. */
+export const faces = { sans: '"DM Sans", sans-serif', typed: '"Courier Prime", monospace', marker: 'Kalam, cursive', label: '"Patrick Hand", cursive' };
+const fonts = ['400 18px "DM Sans"', '500 22px "DM Sans"', '400 15px "Courier Prime"', '700 19px "Courier Prime"', '400 17px Kalam', '700 22px Kalam', '400 26px "Patrick Hand"'];
 
 export function useCanvasTexture(width: number, height: number, draw: Draw, colors: SceneColors) {
   const invalidate = useThree(st => st.invalidate);
@@ -56,8 +58,8 @@ export function useCanvasTexture(width: number, height: number, draw: Draw, colo
 }
 
 /** Breaks text into lines at word boundaries, as the browser does for the same font and width. */
-function wrap(ctx: Ctx, value: string, maxWidth: number, size: number, weight: number, scale: number) {
-  ctx.font = `${weight} ${size * scale}px "DM Sans", sans-serif`;
+function wrap(ctx: Ctx, value: string, maxWidth: number, size: number, weight: number, scale: number, face: string) {
+  ctx.font = `${weight} ${size * scale}px ${face}`;
   const lines: string[] = [];
   let line = '';
   for (const word of value.split(' ')) {
@@ -69,9 +71,9 @@ function wrap(ctx: Ctx, value: string, maxWidth: number, size: number, weight: n
 }
 
 /** Writes wrapped text like a CSS block: `top` is the top of the first line box. Returns the height used. */
-function text(ctx: Ctx, value: string, x: number, top: number, maxWidth: number, size: number, lineHeight: number, weight: number, color: string, scale: number) {
+function text(ctx: Ctx, value: string, x: number, top: number, maxWidth: number, size: number, lineHeight: number, weight: number, color: string, scale: number, face = faces.sans) {
   ctx.save();
-  const lines = wrap(ctx, value, maxWidth, size, weight, scale);
+  const lines = wrap(ctx, value, maxWidth, size, weight, scale, face);
   ctx.fillStyle = color;
   ctx.textBaseline = 'middle';
   lines.forEach((l, i) => ctx.fillText(l, x * scale, (top + lineHeight * i + lineHeight / 2) * scale));
@@ -91,33 +93,33 @@ function tagOutline(ctx: Ctx, w: number, h: number, c: SceneColors) {
   ctx.restore();
 }
 
-/** Mirrors `.tag-surface`: padding 46/40/28/96, title 38/1.1, note 25/1.45, foot 17px at the bottom. */
+/** Mirrors `.tag-surface` in Patrick Hand: padding 46/40/28/96, title 40/1.1, note 26/1.4, foot 18px at the bottom. */
 export const drawHobbyTag = (hobby: Hobby): Draw => (ctx, w, h, c) => {
   const s = w / tag.pixels[0];
   tagOutline(ctx, w, h, c);
   const width = tag.pixels[0] - 96 - 40;
-  const title = text(ctx, hobby.title, 96, 46, width, 38, 41.8, 500, c.text, s);
-  text(ctx, hobby.text, 96, 46 + title + 12, width, 25, 36.25, 400, c['text-muted'], s);
-  text(ctx, tagNote, 96, tag.pixels[1] - 28 - 20, width, 17, 20, 400, c['text-muted'], s);
+  const title = text(ctx, hobby.title, 96, 46, width, 40, 44, 400, c.text, s, faces.label);
+  text(ctx, hobby.text, 96, 46 + title + 12, width, 26, 36.4, 400, c['text-muted'], s, faces.label);
+  text(ctx, tagNote, 96, tag.pixels[1] - 28 - 22, width, 18, 22, 400, c['text-muted'], s, faces.label);
 };
 
-/** Mirrors `.board-card`: 320 × 440, padding 16, photo 288 × 192, title 22/28, caption 18/26, foot 14px. */
+/** Mirrors `.board-card` in Kalam: 320 × 440, padding 16, photo 288 × 192, title 22/28 bold, caption 17/24, foot 14px. */
 export const drawAchievementCard = (a: Achievement): Draw => (ctx, w, h, c) => {
   const s = w / 320;
   paper(ctx, w, h, c);
-  const title = text(ctx, a.title, 16, 16 + 192 + 18, 288, 22, 28, 500, c.text, s);
-  text(ctx, a.description, 16, 16 + 192 + 18 + title + 10, 288, 18, 26, 400, c['text-muted'], s);
-  text(ctx, achievementBoard.cardNote, 16, 440 - 26 - 17, 288, 14, 17, 400, c['text-muted'], s);
+  const title = text(ctx, a.title, 16, 16 + 192 + 18, 288, 22, 28, 700, c.text, s, faces.marker);
+  text(ctx, a.description, 16, 16 + 192 + 18 + title + 10, 288, 17, 24, 400, c['text-muted'], s, faces.marker);
+  text(ctx, a.note, 16, 440 - 26 - 17, 288, 14, 17, 400, c['text-muted'], s, faces.marker);
 };
 
-/** Mirrors `.board-note`: 440 × 112, padding 18/26, centred column of a 34/1.1 title and a 16px note. */
+/** Mirrors `.board-note` in Kalam: 440 × 112, padding 18/26, centred column of a bold 34/1.1 title and a 16px note. */
 export const drawBoardNote: Draw = (ctx, w, h, c) => {
   const s = w / 440;
   paper(ctx, w, h, c);
-  const titleLines = wrap(ctx, achievementBoard.title, 388, 34, 500, s).length;
+  const titleLines = wrap(ctx, achievementBoard.title, 388, 34, 700, s, faces.marker).length;
   const top = (112 - (titleLines * 37.4 + 6 + 19)) / 2;
-  const title = text(ctx, achievementBoard.title, 26, top, 388, 34, 37.4, 500, c.text, s);
-  text(ctx, achievementBoard.note, 26, top + title + 6, 388, 16, 19, 400, c['text-muted'], s);
+  const title = text(ctx, achievementBoard.title, 26, top, 388, 34, 37.4, 700, c.text, s, faces.marker);
+  text(ctx, achievementBoard.note, 26, top + title + 6, 388, 16, 19, 400, c['text-muted'], s, faces.marker);
 };
 
 function bars(ctx: Ctx, color: string, marks: Bar[], scale: number) {
@@ -138,37 +140,50 @@ function rules(ctx: Ctx, color: string, x: number, from: number, to: number, ste
 }
 function paper(ctx: Ctx, w: number, h: number, c: SceneColors) { ctx.fillStyle = c.paper; ctx.fillRect(0, 0, w, h); }
 
+/** Abstract print marks laid out like `.resume-sheet`: heading block, then five sections with their lines. */
 export const drawResume: Draw = (ctx, w, h, c) => {
   const s = w / 600;
   paper(ctx, w, h, c);
-  bars(ctx, c.ink, [[52, 60, 150, 9, .45], [52, 92, 300, 36, .85], [52, 152, 330, 11, .35], [52, 186, 496, 2, .18]], s);
-  for (let i = 0; i < 3; i++) {
-    const y = 206 + i * 116;
-    bars(ctx, c.green, [[52, y, 140 + (i === 2 ? 60 : 0), 16, .8]], s);
-    bars(ctx, c.ink, [[52, y + 42, 410 - i * 30, 13, .4], [52, y + 98, 496, 2, .14]], s);
+  bars(ctx, c.ink, [[48, 50, 130, 8, .4], [48, 76, 280, 30, .85], [48, 122, 440, 7, .3], [48, 141, 300, 7, .3]], s);
+  // [heading y, body lines, rule above]
+  const sections: [number, number[], number][] = [[186, [500, 470], 166], [288, [460, 380, 400], 268], [433, [480, 470, 220], 413], [577, [330, 360], 557], [681, [470, 260], 661]];
+  for (const [y, lines, rule] of sections) {
+    bars(ctx, c.ink, [[48, rule, 504, 1.5, .16]], s);
+    bars(ctx, c.green, [[48, y, 110, 13, .8]], s);
+    bars(ctx, c.ink, lines.map((width, i): Bar => [48, y + 30 + i * 22, width, 9, .35]), s);
   }
-  bars(ctx, c.ink, [[52, 786, 220, 9, .3]], s);
+  bars(ctx, c.ink, [[48, 796, 240, 8, .3]], s);
 };
 
+/** Mirrors `.journal-surface` in Courier Prime: a timeline rule with one dot per entry, meta 14/19, title 19/25, summary 15/20. */
 export const drawJournal: Draw = (ctx, w, h, c) => {
   const s = w / 610;
   paper(ctx, w, h, c);
   // The readable face begins 80 pixels below the full paper's top, clear of its clip.
   const offset = 80;
-  text(ctx, 'WORK JOURNAL', 30, offset + 24, 550, 10, 14, 500, c['text-muted'], s);
-  text(ctx, 'Experience', 30, offset + 44, 550, 26, 30, 500, c.text, s);
+  const [padY, padX] = journalLayout.padding;
+  text(ctx, 'WORK JOURNAL', 30, offset + 22, 550, 12, 16, 400, c['text-muted'], s, faces.typed);
+  text(ctx, 'Experience', 30, offset + 42, 550, 28, 32, 700, c.text, s, faces.typed);
+  ctx.fillStyle = c['text-muted'];
+  ctx.globalAlpha = .25;
+  ctx.fillRect((journalLayout.dotX - 1) * s, (offset + 86) * s, 2 * s, (journalLayout.height - 86 - 26) * s);
+  ctx.globalAlpha = 1;
   experience.forEach((job, i) => {
     const card = journalEntry(i);
-    const x = card.x + journalLayout.padding + 1;
-    const y = card.y + offset + journalLayout.padding + 1;
-    const width = card.width - 2 * journalLayout.padding - 2;
+    const x = card.x + padX + 1;
+    const y = card.y + offset + padY + 1;
+    const width = card.width - 2 * padX - 2;
+    ctx.fillStyle = c.paper;
+    ctx.fillRect(card.x * s, (card.y + offset) * s, card.width * s, card.height * s);
     ctx.strokeStyle = c['text-muted'];
     ctx.globalAlpha = .2;
     ctx.strokeRect(card.x * s, (card.y + offset) * s, card.width * s, card.height * s);
     ctx.globalAlpha = 1;
-    text(ctx, `${job.period}${job.organization ? ` · ${job.organization}` : ''}`, x, y, width, 12, 18, 400, c.text, s);
-    const titleHeight = text(ctx, job.title, x, y + 22, width, 16, 22, 500, c.text, s);
-    text(ctx, job.summary, x, y + 26 + titleHeight, width, 13, 18, 400, c['text-muted'], s);
+    ctx.fillStyle = c.green;
+    ctx.beginPath(); ctx.arc(journalLayout.dotX * s, (card.y + offset + 22) * s, 6 * s, 0, Math.PI * 2); ctx.fill();
+    text(ctx, `${job.period}${job.organization ? ` · ${job.organization}` : ''}`, x, y, width, 14, 19, 400, c.green, s, faces.typed);
+    const titleHeight = text(ctx, job.title, x, y + 21, width, 19, 25, 700, c.text, s, faces.typed);
+    text(ctx, job.summary, x, y + 24 + titleHeight, width, 15, 20, 400, c['text-muted'], s, faces.typed);
   });
 };
 

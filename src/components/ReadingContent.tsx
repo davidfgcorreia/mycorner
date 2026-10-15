@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { ArrowLeft, ArrowRight, BookOpen, Folder, Home, Monitor } from 'lucide-react';
-import { about, achievementBoard, achievements, education, educationNote, experience, hobbies, profile, projects, resume, tagNote } from '@/personal';
+import { about, achievementBoard, achievements, education, educationNote, experience, hobbies, profile, projects, resume, tagNote, type ResumeEntry } from '@/personal';
 import { boardCards, boardNote, type BoardItem } from '@/lib/board-layout';
 import { ProjectPage } from './ProjectPage';
 import { journalEntry } from '@/lib/journal-layout';
@@ -53,54 +53,142 @@ export function ScreenContent() {
   </Region>;
 }
 
+const contactLine = () => {
+  const { email, github, linkedin, location } = profile.contact;
+  const bare = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '');
+  return [location, email, github && bare(github), linkedin && bare(linkedin)].filter(Boolean).join(' · ');
+};
+
+function ResumeEntries({ title, entries }: { title: string; entries: ResumeEntry[] }) {
+  return <section><h3>{title}</h3>{entries.map(e => <div key={e.title} className="resume-entry">
+    <p className="resume-entry-head"><strong>{e.title}</strong><span>{e.place}</span><span>{e.period}</span></p>
+    <ul>{e.points.map(point => <li key={point}>{point}</li>)}</ul>
+  </div>)}</section>;
+}
+
+/** The printer sheet: the short version, sized to fit the paper without scrolling. */
 export function ResumeSheet() {
+  const line = (e: ResumeEntry) => <li key={e.title}><strong>{e.title}</strong> · {e.place} · {e.period}</li>;
   return <article className="resume-sheet">
     <span className="eyebrow">{resume.heading.toUpperCase()}</span>
     <h2>{profile.name}</h2>
-    {resume.isSample && <p className="sample-note">Sample résumé · personal details not yet supplied</p>}
-    {resume.sections.map(s => <section key={s.title}><h3>{s.title}</h3><p>{s.text}</p></section>)}
-    <footer>Printed in {profile.firstName}’s corner · {profile.year}</footer>
+    <p className="resume-contact">{resume.role} · {contactLine()}</p>
+    <section><h3>Profile</h3><p>{resume.sheetSummary}</p></section>
+    <section><h3>Experience</h3><ul>{resume.experience.map(line)}</ul></section>
+    <section><h3>Education</h3><ul>{resume.education.map(line)}</ul></section>
+    <section><h3>Awards</h3><ul>{resume.awards.map(a => <li key={a}>{a}</li>)}</ul></section>
+    <section><h3>Skills</h3><p>{resume.sheetSkills}</p></section>
+    <footer>Full résumé: “Print résumé” downloads the PDF · {profile.year}</footer>
+  </article>;
+}
+
+/** The full résumé, used for printing and the PDF. */
+function ResumeDocument() {
+  const { github, linkedin, email } = profile.contact;
+  return <article className="resume-document">
+    <header>
+      <h1>{profile.name}</h1>
+      <p className="resume-role">{resume.role}</p>
+      <p className="resume-contact">{profile.contact.location} · <a href={`mailto:${email}`}>{email}</a> · <a href={github}>{github.replace(/^https?:\/\//, '')}</a> · <a href={linkedin}>{linkedin.replace(/^https?:\/\/(www\.)?/, '')}</a></p>
+    </header>
+    <section><h3>Profile</h3><p>{resume.summary}</p></section>
+    <ResumeEntries title="Experience" entries={resume.experience} />
+    <ResumeEntries title="Education" entries={resume.education} />
+    <ResumeEntries title="Selected projects" entries={resume.projects} />
+    <section><h3>Awards</h3><ul>{resume.awards.map(a => <li key={a}>{a}</li>)}</ul></section>
+    <section><h3>Skills</h3>{resume.skills.map(g => <p key={g.label}><strong>{g.label}:</strong> {g.items}</p>)}<p><strong>Spoken languages:</strong> {resume.spoken}</p></section>
   </article>;
 }
 export function ResumeContent() { return <Region label={`${profile.name} — Résumé`} className="resume-region"><ResumeSheet /></Region>; }
 /** Print-only copy: the in-room sheet is transformed, so printing uses a plain document. */
-export function ResumePrintCopy() { return <div className="resume-print-copy"><ResumeSheet /></div>; }
+export function ResumePrintCopy() { return <div className="resume-print-copy"><ResumeDocument /></div>; }
+
+type Turn = { from: number; to: number };
+const TURN_MS = 1100;
+const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function BookLeft({ chapter, onChapter, copy }: { chapter: number; onChapter: (i: number) => void; copy?: boolean }) {
+  return <>
+    <BookOpen aria-hidden="true" />
+    <span className="eyebrow">{profile.name.toUpperCase()}</span>
+    <h2>School<br />history.</h2>
+    <div className="book-index">{education.map((s, i) => <button type="button" key={s.title} tabIndex={copy ? -1 : undefined} aria-current={chapter === i} onClick={() => onChapter(i)}><span>0{i + 1}</span>{s.title}</button>)}</div>
+    <small>{educationNote}</small>
+  </>;
+}
+
+function BookRight({ chapter, onChapter, copy }: { chapter: number; onChapter: (i: number) => void; copy?: boolean }) {
+  const school = education[chapter];
+  if (!school) return null;
+  const tab = copy ? -1 : undefined;
+  return <>
+    <div className="page-turn" role={copy ? undefined : 'region'} aria-label={copy ? undefined : `${school.title} details`}>
+      <span className="eyebrow">{school.period}</span>
+      <h2>{school.title}</h2>
+      <a className="book-institution" href={school.institutionUrl} tabIndex={tab} target="_blank" rel="noopener noreferrer">{school.institution}</a>
+      {school.qualification && <h3>{school.qualification}</h3>}
+      {school.description && <p>{school.description}</p>}
+      <dl className="book-results">{school.results.map(result => <div key={result.label}>
+        <dt>{result.label}</dt>
+        <dd>{result.value}{result.note && <span>{result.note}</span>}</dd>
+      </div>)}</dl>
+      {school.research && <section className="book-research" aria-label="Current thesis">
+        <h3>{school.research.title}</h3>
+        <p>{school.research.description}</p>
+      </section>}
+      <div className="ruled-paper" />
+    </div>
+    <div className="book-pagination">
+      <button type="button" tabIndex={tab} aria-label="Previous school chapter" disabled={chapter === 0} onClick={() => onChapter(chapter - 1)}><ArrowLeft /></button>
+      <span>{chapter + 1} / {education.length}</span>
+      <button type="button" tabIndex={tab} aria-label="Next school chapter" disabled={chapter === education.length - 1} onClick={() => onChapter(chapter + 1)}><ArrowRight /></button>
+    </div>
+  </>;
+}
+
+/**
+ * Turning a chapter flips the right page over the spine like a real leaf. Forward, the old page
+ * turns over and lands on the left; backward, a leaf lifts off the left and lands on the right with
+ * the earlier chapter. The leaf's back is a copy of the index page, so the left page reads the same
+ * before, during and after. The outer half bends ahead of the inner half (a curl), so some of the
+ * page faces the viewer in every frame instead of going edge-on and vanishing.
+ */
+/** One half of the turning leaf, front (a chapter) and back (the index page), both inert copies. */
+function leafFaces(right: number, left: number, half: 'inner' | 'outer') {
+  const noop = () => {};
+  return <>
+    <div className={`book-page book-right leaf-front is-${half}`}><BookRight chapter={right} onChapter={noop} copy /></div>
+    <div className={`book-page book-left leaf-back is-${half}`}><BookLeft chapter={left} onChapter={noop} copy /></div>
+  </>;
+}
 
 export function BookSpread() {
   const [chapter, setChapter] = useState(0);
-  const school = education[chapter];
-  if (!school) return null;
+  const [turn, setTurn] = useState<Turn | null>(null);
+  const go = (to: number) => {
+    if (turn || to === chapter || to < 0 || to >= education.length) return;
+    if (!reducedMotion()) setTurn({ from: chapter, to });
+    setChapter(to);
+  };
+  useEffect(() => {
+    if (!turn) return;
+    const t = window.setTimeout(() => setTurn(null), TURN_MS + 50);
+    return () => window.clearTimeout(t);
+  }, [turn]);
+  const forward = turn ? turn.to > turn.from : true;
+  // Backward, the old chapter stays on the right until the leaf lands on it.
+  const right = turn && !forward ? turn.from : chapter;
+  // Each index page highlights the level on the page facing it: the page under the leaf keeps the
+  // spread it belongs to, and the leaf's back carries the other one.
+  const left = turn && forward ? turn.from : chapter;
+  const leafLeft = turn && !forward ? turn.from : chapter;
   return <Region label="My school history" className="book-spread">
-    <div className="book-page book-left">
-      <BookOpen aria-hidden="true" />
-      <span className="eyebrow">{profile.name.toUpperCase()}</span>
-      <h2>School<br />history.</h2>
-      <div className="book-index">{education.map((s, i) => <button type="button" key={s.title} aria-current={chapter === i} onClick={() => setChapter(i)}><span>0{i + 1}</span>{s.title}</button>)}</div>
-      <small>{educationNote}</small>
-    </div>
-    <div className="book-page book-right">
-      <div key={chapter} className="page-turn" role="region" aria-label={`${school.title} details`}>
-        <span className="eyebrow">{school.period}</span>
-        <h2>{school.title}</h2>
-        <a className="book-institution" href={school.institutionUrl} target="_blank" rel="noopener noreferrer">{school.institution}</a>
-        {school.qualification && <h3>{school.qualification}</h3>}
-        {school.description && <p>{school.description}</p>}
-        <dl className="book-results">{school.results.map(result => <div key={result.label}>
-          <dt>{result.label}</dt>
-          <dd>{result.value}{result.note && <span>{result.note}</span>}</dd>
-        </div>)}</dl>
-        {school.research && <section className="book-research" aria-label="Current thesis">
-          <h3>{school.research.title}</h3>
-          <p>{school.research.description}</p>
-        </section>}
-        <div className="ruled-paper" />
-      </div>
-      <div className="book-pagination">
-        <button type="button" aria-label="Previous school chapter" disabled={chapter === 0} onClick={() => setChapter(v => v - 1)}><ArrowLeft /></button>
-        <span>{chapter + 1} / {education.length}</span>
-        <button type="button" aria-label="Next school chapter" disabled={chapter === education.length - 1} onClick={() => setChapter(v => v + 1)}><ArrowRight /></button>
-      </div>
-    </div>
+    <div className="book-page book-left"><BookLeft chapter={left} onChapter={go} /></div>
+    <div className="book-page book-right"><BookRight chapter={right} onChapter={go} /></div>
+    {turn && <div className={`book-leaf ${forward ? 'is-forward' : 'is-backward'}`} aria-hidden="true" inert style={{ '--turn': `${TURN_MS}ms` } as CSSProperties}>
+      {leafFaces(forward ? turn.from : turn.to, leafLeft, 'inner')}
+      <div className="leaf-fold">{leafFaces(forward ? turn.from : turn.to, leafLeft, 'outer')}</div>
+    </div>}
   </Region>;
 }
 
@@ -111,10 +199,10 @@ export function BoardContent({ detail, onDetail }: { detail: number | null; onDe
     <div className="board-note" style={place(boardNote)}><span>{achievementBoard.title}</span><small>{achievementBoard.note}</small></div>
     {achievements.map((a, i) => { const card = boardCards[i]; return card && <button type="button" key={a.title} className={`board-card ${detail === i ? 'is-focused' : ''}`} style={place(card)} aria-pressed={detail === i} onClick={() => onDetail(detail === i ? null : i)}>
       <i className="board-pin" aria-hidden="true" />
-      <img src={a.image} width={288} height={192} alt={`Illustrative photograph: ${a.title}`} />
+      <img src={a.image} width={288} height={192} alt={a.alt} />
       <strong>{a.title}</strong>
       <p>{a.description}</p>
-      <small>{achievementBoard.cardNote}</small>
+      <small>{a.note}</small>
     </button>; })}
   </Region>;
 }

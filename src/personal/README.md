@@ -7,10 +7,10 @@ element of the cabin; edit its `index.ts` and the site updates.
 | --- | --- | --- |
 | `profile/` | Header badge, footer, browser tab, link previews | Name, role line, site title/description, contact links |
 | `about/` | Notebook on the desk, “About me” button | Greeting, short biography paragraphs, cover note |
-| `resume/` | Printer sheet, “Print résumé” | Résumé sections |
+| `resume/` | Printer sheet (short version); “Print résumé” downloads `public/david-correia-cv.pdf` (full version) | Summary, experience, education, projects, awards, skills; re-export the PDF after edits |
 | `education/` | School book on the shelf | Institution/link, course summary, results and optional research per chapter |
 | `experience/` | Work board on the wall | Role, period, optional organization, concise summary and optional project URL |
-| `achievements/` | Photo board (3 photos) | Titles, captions, and `images/` |
+| `achievements/` | Photo board (2 photos) | Titles, captions, foot notes, alt text and `images/` |
 | `hobbies/` | Tags on the tennis bag, surfboard and rod | Titles and notes |
 | `projects/` | Folders on the computer | Name, category, tags, details, images, demo and website URLs (see its README) |
 
@@ -23,8 +23,8 @@ Keep school chapters and biography paragraphs short enough to fit their pages wi
 scrolling. Grades use the Portuguese 0–20 scale; distinguish completed results from a
 current average. Do not invent dates or thesis outcomes.
 
-The work board currently has four entries, newest first, in a fixed two-by-two layout.
-Adding roles requires reviewing `journal-layout.ts`, the canvas texture and camera frames.
+The work board currently has four entries, newest first, in one column (`journal-layout.ts`).
+Each summary must fit three typed lines; adding a fifth role needs a new row step there.
 Do not switch to pagination or scrolling: each entry can be selected for camera focus.
 
 Hobby IDs remain tied to the physical props (`tennis`, `surfing`, `fishing`); their titles and

@@ -1,7 +1,7 @@
 import { ArrowLeft, ChevronLeft, ChevronRight, LayoutGrid, Maximize2, Minus, Plus, Printer, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { corners, type Corner } from '@/lib/portfolio';
-import { achievements, hobbies, experience } from '@/personal';
+import { achievements, hobbies, experience, resume } from '@/personal';
 
 /* DOM controls layered over the cabin. Kept outside the scene JSX runtime so ARIA props survive. */
 type Props = {
@@ -34,7 +34,7 @@ export function SceneOverlay({ active, ready, detail, onDetail, onClose, onZoom,
   return <>
     <div className="reading-toolbar">
       <Button variant="outline" onClick={onClose}><ArrowLeft />Back to room</Button>
-      {active === 'resume' && <Button variant="outline" onClick={() => window.print()}><Printer />Print résumé</Button>}
+      {active === 'resume' && <Button variant="outline" asChild><a className="resume-pdf" href={resume.pdf} download><Printer />Print résumé</a></Button>}
       {active === 'experience' && detail !== null && experience[detail]?.projectUrl && <a className="experience-project-link" href={experience[detail].projectUrl} target="_blank" rel="noopener noreferrer">View project ↗</a>}
     </div>
     <p className="sr-only" aria-live="polite">{ready ? `${name} is open.` : `Opening ${name}…`}</p>

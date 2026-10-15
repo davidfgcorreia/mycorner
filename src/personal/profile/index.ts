@@ -13,9 +13,9 @@ export const profile = {
   year: 2026,
   /** Optional. Leave a field empty to hide it. */
   contact: {
-    email: '',
-    github: '',
-    linkedin: '',
-    location: '',
+    email: 'davidfgcorreia@protonmail.com',
+    github: 'https://github.com/davidfgcorreia',
+    linkedin: 'https://www.linkedin.com/in/david-c0rreia',
+    location: 'Lisbon, Portugal',
   },
 };

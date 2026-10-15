@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import { SceneOverlay } from '@/components/SceneOverlay';
 import { ReadingObjects, type Motion, type Select } from '@/components/scene/ReadingObjects';
 import { useSceneColors } from '@/components/scene/colors';
-import { bakedMaterial, box, part, useMerged, within, type Part } from '@/components/scene/merge';
+import { bakedMaterial, box, part, useMerged, type Part } from '@/components/scene/merge';
 import { RefreshShadows, prefersReducedMotion } from '@/components/scene/frames';
 import type { Corner } from '@/lib/portfolio';
 import { camera as rig, cameraDuration, cameraView, defaultDetail, easeInOut, isNarrow, motionDurations, roomView, type CameraPose, type Vec } from '@/lib/reading-surfaces';
@@ -58,7 +58,7 @@ const markers: { corner: Corner; position: Vec; title: string }[] = [
   { corner: 'resume', position: [1.25, 1.12, -1.42], title: 'My résumé' },
   { corner: 'achievements', position: [.78, 2.24, -2.12], title: 'My achievements' },
   { corner: 'hobbies', position: [2.1, 1.5, -2.14], title: 'Beyond the screen' },
-  { corner: 'about', position: [-.24, 1.12, -1.36], title: 'About me' },
+  { corner: 'about', position: [-.5, 1.12, -1.36], title: 'About me' },
 ];
 
 const ringGeometry = new THREE.RingGeometry(.1, .115, 40);
@@ -94,7 +94,6 @@ function Markers({ onSelect }: { onSelect: Select }) {
 
 /** Everything in the room that never moves, as one mesh. */
 function roomParts(c: ReturnType<typeof useSceneColors>): Part[] {
-  const cylinder = (r0: number, r1: number, h: number, segments: number) => new THREE.CylinderGeometry(r0, r1, h, segments);
   return [
     // A cutaway, open-front cabin: 6 × 5 meters.
     box([0, -.15, 0], [6.2, .3, 5.2], c.wood),
@@ -121,14 +120,6 @@ function roomParts(c: ReturnType<typeof useSceneColors>): Part[] {
     // A computer mouse beside the keyboard.
     part(new THREE.SphereGeometry(.055, 20, 14), c['wood-dark'], [-.73, 1.425, -1.26], undefined, [.8, .55, 1.3]),
     box([-.73, 1.457, -1.31], [.012, .012, .04], c.paper),
-    // A cup holding pens on the desk.
-    ...within([
-      part(cylinder(.055, .048, .16, 20), c.metal),
-      part(cylinder(.05, .05, .004, 20), c['wood-dark'], [0, .081, 0]),
-      part(cylinder(.007, .007, .22, 8), c.green, [.02, .16, .012], [-.12, 0, .1]),
-      part(cylinder(.007, .007, .21, 8), c.orange, [-.018, .155, -.01], [.1, 0, -.08]),
-      part(cylinder(.007, .007, .18, 8), c.ink, [.004, .148, -.018], [-.09, .12, .05]),
-    ], [-.38, 1.415, -1.78]),
   ];
 }
 

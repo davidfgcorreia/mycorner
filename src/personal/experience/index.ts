@@ -16,7 +16,7 @@ export const experience: Job[] = [
     title: 'Software engineering intern',
     period: '2026',
     organization: 'Aptoide',
-    summary: 'Built two extensions: Replit, Lovable and similar AI coding projects → Apple and Aptoide submissions; existing Apple submissions → faster Aptoide publication.',
+    summary: 'Built two extensions: AI-coded projects (Replit, Lovable…) → Apple and Aptoide submissions; Apple submissions → faster Aptoide publication.',
   },
   {
     title: 'Software development intern',
