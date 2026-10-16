@@ -3,5 +3,11 @@
 // reproducible and never ahead of Cloudflare's clock; bump it deliberately.
 {
   "name": "davidcorreia",
-  "compatibility_date": "2026-10-01"
+  "compatibility_date": "2026-10-01",
+  // The custom domain (bought on Cloudflare): deploying creates its DNS records and certificate.
+  // www redirects to the bare domain in src/server.ts.
+  "routes": [
+    { "pattern": "davidfcorreia.com", "custom_domain": true },
+    { "pattern": "www.davidfcorreia.com", "custom_domain": true }
+  ]
 }

@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { profile } from "../personal";
+import { personJsonLd } from "../lib/seo";
 
 function NotFoundComponent() {
   return (
@@ -85,9 +86,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: profile.siteTitle },
       { property: "og:description", content: profile.shareDescription },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:url", content: `${profile.site}/` },
+      { property: "og:site_name", content: profile.name },
+      { name: "twitter:card", content: "summary" },
     ],
+    scripts: [{ type: "application/ld+json", children: personJsonLd() }],
     links: [
+      { rel: "canonical", href: `${profile.site}/` },
       {
         rel: "stylesheet",
         href: appCss,

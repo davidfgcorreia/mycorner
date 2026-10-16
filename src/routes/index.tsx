@@ -4,7 +4,7 @@ import { ArrowUpRight, BookOpen, Folder, Heart, Monitor, Printer, Trophy, Waves 
 import { Button } from '@/components/ui/button';
 import { ResumePrintCopy } from '@/components/ReadingContent';
 import { corners, type Corner } from '@/lib/portfolio';
-import { profile } from '@/personal';
+import { profile, resume } from '@/personal';
 
 // Three.js is most of the page's weight: load it in its own chunk so the page shell paints first.
 const CabinScene = lazy(() => import('@/components/CabinScene').then(m => ({ default: m.CabinScene })));
@@ -17,10 +17,27 @@ export const Route = createFileRoute('/')({
     { property: 'og:title', content: profile.siteTitle },
     { property: 'og:description', content: profile.shareDescription },
     { property: 'og:type', content: 'website' },
-    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:card', content: 'summary' },
   ] }),
+  // The cabin renders only in the browser; this is what the server sends instead, so search
+  // engines (and anyone waiting for the scripts) get real text and links.
+  pendingComponent: Intro,
   component: Index,
 });
+
+function Intro() {
+  const { github, linkedin, devpost, location } = profile.contact;
+  const links = [['GitHub', github], ['LinkedIn', linkedin], ['Devpost', devpost], ['Résumé (PDF)', resume.pdf]].filter(([, href]) => href);
+  return <div className="portfolio-page site-intro">
+    <main className="intro-card">
+      <h1>{profile.name}</h1>
+      <p className="intro-role">{resume.role}{location && ` · ${location}`}</p>
+      <p>{resume.summary}</p>
+      <ul>{links.map(([label, href]) => <li key={label}><a href={href}>{label}</a></li>)}</ul>
+      <p className="intro-loading" aria-hidden="true">{profile.footerNote}</p>
+    </main>
+  </div>;
+}
 
 function Index() {
   const [active, setActive] = useState<Corner | null>(null);

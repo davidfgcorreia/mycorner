@@ -47,7 +47,7 @@ been re-profiled after the latest portfolio content and notebook changes.
 **HTML over the scene**
 
 - Never animate readable HTML in step with the camera; it is hidden while moving (see
-  `architecture.md`).
+  `architecture.md`). The one exception is the page zoom on the books (`liveZoom`).
 - Avoid `box-shadow`/`filter` transitions inside readable surfaces.
 - Don't `scale()` `.scene-wrap` or the canvas will size itself wrong.
 - Work entry focus uses the Director and camera framing, not CSS enlargement of the board.

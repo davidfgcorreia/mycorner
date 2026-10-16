@@ -75,6 +75,8 @@ Moving live, transformed HTML over WebGL every frame stutters (badly in Firefox)
 
 - When a camera move starts, the Director adds `is-moving` to `.surface-portal`
   (`opacity: 0`); on settle it removes it and the HTML fades back in over 0.2s.
+- Exception: zooming between the pages of a book (`liveZoom` in `reading-surfaces.ts`) keeps the
+  HTML visible, since only the camera moves and the move is short; the text stays in focus.
 - During the move, the 3D textures show the same content. For surfaces you can step between
   (board cards, work entries, hobby tags) those textures contain the real text; see the parity rules in
   `style-guide.md`.
@@ -86,7 +88,8 @@ Moving live, transformed HTML over WebGL every frame stutters (badly in Firefox)
   Changing Overview, Images or Demo resets that region to the top. Back restores folder focus.
 - Only the selected preview mounts an iframe or native video. HTTPS embeds have an external
   fallback; local recordings use `demoType: "recording"` and a `/projects/` media URL.
-- The school book has three fixed pages of concise content, navigated by its index or arrows.
+- The school book has three fixed pages of concise content. The pages carry no controls: the
+  chapter (state in `CabinScene`) is turned from the bar below the book in `SceneOverlay`.
   Keep the content within the paper instead of introducing a scroll container.
 - The experience surface contains four entries in a two-by-two grid. `journal-layout.ts`
   supplies the pixel rectangles for HTML and the canvas texture. `reading-surfaces.ts` converts
@@ -94,7 +97,10 @@ Moving live, transformed HTML over WebGL every frame stutters (badly in Firefox)
   `SceneOverlay` supplies previous/next focus, Whole board and the selected role's project link.
   Typography stays fixed while the camera enlarges an entry.
 - The biography notebook renders paragraphs from `about/` and decorative SVG sketches from
-  `NotebookDoodles`, hidden from assistive technology. The phone camera frames the right page.
+  `NotebookDoodles`, hidden from assistive technology.
+- On phones both books open on the whole spread. The bar's zoom button zooms onto the left page
+  and turns into zoom out; while zoomed, a tap anywhere on the other page moves the zoom there
+  (the `details` of `studies` and `about`).
 
 ## Personal content
 

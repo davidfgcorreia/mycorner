@@ -205,8 +205,7 @@ export const drawBookText: Draw = (ctx, w, h, c) => {
   paper(ctx, w, h, c);
   bars(ctx, c.green, [[52, 62, 120, 10, .6]], s);
   bars(ctx, c.ink, [[52, 100, 340, 42, .85], [52, 182, 470, 15, .4], [52, 224, 300, 15, .4]], s);
-  rules(ctx, c.ink, 52, 300, 700, 42, 496, s);
-  bars(ctx, c.ink, [[52, 780, 40, 16, .35], [270, 783, 60, 10, .35], [508, 780, 40, 16, .35]], s);
+  rules(ctx, c.ink, 52, 300, 780, 42, 496, s);
 };
 
 export const drawNotebookLeft: Draw = (ctx, w, h, c) => {

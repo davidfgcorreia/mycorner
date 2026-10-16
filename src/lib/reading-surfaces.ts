@@ -21,6 +21,8 @@ export type ReadingObject = {
   details?: Rect[];
   narrowDetails?: Rect[];
   defaultDetail?: 'always' | 'narrow';
+  /** Keep the readable HTML on screen while the camera zooms between this object's details (the object itself stays still). */
+  liveZoom?: boolean;
   /** Camera distance from the frame, when something stands in front of the object (default camera.distance). */
   distance?: number;
 };
@@ -125,7 +127,9 @@ export const readingObjects: Record<Corner, ReadingObject> = {
     placement: schoolBook.held,
     faces: [{ position: [0, 0, .0006], width: .34, height: .24, pixels: [1200, 847] }],
     frame: [at([0, 0, 0], .352, .252)],
-    narrowFrame: [at([.085, 0, 0], .174, .244)],
+    // Zoom targets: the left and right page. Phones open on the whole spread and zoom in from there.
+    details: [at([-.085, 0, 0], .174, .244), at([.085, 0, 0], .174, .244)],
+    liveZoom: true,
   },
   achievements: {
     placement: board.placement,
@@ -156,7 +160,8 @@ export const readingObjects: Record<Corner, ReadingObject> = {
     placement: notebook.placement,
     faces: [{ position: [0, 0, .0006], width: .3, height: .2, pixels: [1050, 700] }],
     frame: [at([0, 0, 0], .31, .21)],
-    narrowFrame: [at([.075, 0, 0], .154, .204)],
+    details: [at([-.075, 0, 0], .154, .204), at([.075, 0, 0], .154, .204)],
+    liveZoom: true,
   },
 };
 

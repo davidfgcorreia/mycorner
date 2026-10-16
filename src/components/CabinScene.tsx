@@ -10,7 +10,7 @@ import { useSceneColors } from '@/components/scene/colors';
 import { bakedMaterial, box, part, useMerged, type Part } from '@/components/scene/merge';
 import { RefreshShadows, prefersReducedMotion } from '@/components/scene/frames';
 import type { Corner } from '@/lib/portfolio';
-import { camera as rig, cameraDuration, cameraView, defaultDetail, easeInOut, isNarrow, motionDurations, roomView, type CameraPose, type Vec } from '@/lib/reading-surfaces';
+import { camera as rig, cameraDuration, cameraView, defaultDetail, easeInOut, isNarrow, motionDurations, readingObjects, roomView, type CameraPose, type Vec } from '@/lib/reading-surfaces';
 import { Surfboard, FishingRod, Racket, SportsBag, surfboardLean } from '@/components/scene/Gear';
 import deskUrl from '@/assets/models/desk.glb?url';
 import screenUrl from '@/assets/models/computerScreen.glb?url';
@@ -208,11 +208,14 @@ function Director({ active, detail, zoom, motion, portal, onSettled }: { active:
       gl.shadowMap.needsUpdate = true;
     }
     if (anim.current?.key !== key) {
+      const previous = anim.current?.key.split('|')[0];
       const zoomOnly = !active && !!anim.current?.key.startsWith('room|');
       anim.current = { key, t: 0, zoomOnly, from: { position: camera.position.clone(), look: look.current.clone(), up: camera.up.clone(), zoom: camera.zoom } };
       settled.current = null;
-      // While the camera moves, readable HTML is hidden and the matching 3D textures carry the view.
-      portal.current?.classList.add('is-moving');
+      // While the camera moves, readable HTML is hidden and the matching 3D textures carry the view,
+      // except when it only zooms within a still object whose pages stay readable (the books).
+      const zoomWithin = !!active && previous === active && !!readingObjects[active].liveZoom;
+      if (!zoomWithin) portal.current?.classList.add('is-moving');
     }
     const a = anim.current;
     const sizeKey = `${size.width}x${size.height}`;
@@ -259,9 +262,12 @@ export function CabinScene({ active, onSelect, onClose }: { active: Corner | nul
   const [readyCorner, setReadyCorner] = useState<Corner | null>(null);
   const [orbitReady, setOrbitReady] = useState(false);
   const [shownActive, setShownActive] = useState(active);
+  // School book chapter, chosen in the reading controls; the book opens on the first one.
+  const [chapter, setChapter] = useState(0);
   if (shownActive !== active) {
     // Selection changed: content waits for the new motion to settle, orbiting waits for the room.
     setShownActive(active);
+    setChapter(0);
     setReadyCorner(null);
     if (active) setOrbitReady(false);
     if (view.corner !== active) setView({ corner: null, detail: null });
@@ -300,12 +306,12 @@ export function CabinScene({ active, onSelect, onClose }: { active: Corner | nul
       <directionalLight position={[-3, 8, 5]} intensity={2.3} castShadow shadow-mapSize={[1024, 1024]} shadow-camera-left={-6} shadow-camera-right={6} shadow-camera-top={6} shadow-camera-bottom={-6} shadow-bias={-.001} />
       <StudioEnvironment />
       <Room onSelect={select} />
-      <ReadingObjects active={active} ready={ready} detail={detail} motion={motion} portal={portal} onSelect={select} onDetail={setDetail} />
+      <ReadingObjects active={active} ready={ready} detail={detail} chapter={chapter} motion={motion} portal={portal} onSelect={select} onDetail={setDetail} />
       {!active && <Markers onSelect={select} />}
       {!active && orbitReady && <OrbitControls makeDefault target={rig.roomLook} enablePan={false} enableDamping minPolarAngle={.55} maxPolarAngle={1.3} minAzimuthAngle={-.25} maxAzimuthAngle={1.25} minZoom={35} maxZoom={160} />}
     </Canvas>
     <div className="surface-portal" ref={portal} />
-    <SceneOverlay active={active} ready={ready} detail={detail} onDetail={setDetail} onClose={onClose}
+    <SceneOverlay active={active} ready={ready} narrow={narrow} detail={detail} chapter={chapter} onChapter={setChapter} onDetail={setDetail} onClose={onClose}
       onZoom={step => setZoom(v => Math.min(1.6, Math.max(.7, v + step * .15)))}
       onReset={() => { setZoom(1.12); setOrbitReady(false); setReset(v => v + 1); }}
       onFullscreen={() => { if (document.fullscreenElement) void document.exitFullscreen(); else void container.current?.requestFullscreen(); }} />

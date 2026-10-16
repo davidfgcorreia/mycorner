@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
-import { ArrowLeft, ArrowRight, BookOpen, Folder, Home, Monitor } from 'lucide-react';
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react';
+import { ArrowLeft, BookOpen, Folder, Home, Monitor } from 'lucide-react';
 import { about, achievementBoard, achievements, education, educationNote, experience, hobbies, profile, projects, resume, tagNote, type ResumeEntry } from '@/personal';
 import { boardCards, boardNote, type BoardItem } from '@/lib/board-layout';
 import { ProjectPage } from './ProjectPage';
@@ -56,7 +56,7 @@ export function ScreenContent() {
 const contactLine = () => {
   const { email, github, linkedin, location } = profile.contact;
   const bare = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '');
-  return [location, email, github && bare(github), linkedin && bare(linkedin)].filter(Boolean).join(' · ');
+  return [location, email, bare(profile.site), github && bare(github), linkedin && bare(linkedin)].filter(Boolean).join(' · ');
 };
 
 function ResumeEntries({ title, entries }: { title: string; entries: ResumeEntry[] }) {
@@ -89,7 +89,7 @@ function ResumeDocument() {
     <header>
       <h1>{profile.name}</h1>
       <p className="resume-role">{resume.role}</p>
-      <p className="resume-contact">{profile.contact.location} · <a href={`mailto:${email}`}>{email}</a> · <a href={github}>{github.replace(/^https?:\/\//, '')}</a> · <a href={linkedin}>{linkedin.replace(/^https?:\/\/(www\.)?/, '')}</a></p>
+      <p className="resume-contact">{profile.contact.location} · <a href={`mailto:${email}`}>{email}</a> · <a href={profile.site}>{profile.site.replace(/^https?:\/\//, '')}</a> · <a href={github}>{github.replace(/^https?:\/\//, '')}</a> · <a href={linkedin}>{linkedin.replace(/^https?:\/\/(www\.)?/, '')}</a></p>
     </header>
     <section><h3>Profile</h3><p>{resume.summary}</p></section>
     <ResumeEntries title="Experience" entries={resume.experience} />
@@ -107,17 +107,17 @@ type Turn = { from: number; to: number };
 const TURN_MS = 1100;
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-function BookLeft({ chapter, onChapter, copy }: { chapter: number; onChapter: (i: number) => void; copy?: boolean }) {
+function BookLeft({ chapter }: { chapter: number }) {
   return <>
     <BookOpen aria-hidden="true" />
     <span className="eyebrow">{profile.name.toUpperCase()}</span>
     <h2>School<br />history.</h2>
-    <div className="book-index">{education.map((s, i) => <button type="button" key={s.title} tabIndex={copy ? -1 : undefined} aria-current={chapter === i} onClick={() => onChapter(i)}><span>0{i + 1}</span>{s.title}</button>)}</div>
+    <ol className="book-index">{education.map((s, i) => <li key={s.title} aria-current={chapter === i ? 'step' : undefined}><span>0{i + 1}</span>{s.title}</li>)}</ol>
     <small>{educationNote}</small>
   </>;
 }
 
-function BookRight({ chapter, onChapter, copy }: { chapter: number; onChapter: (i: number) => void; copy?: boolean }) {
+function BookRight({ chapter, copy }: { chapter: number; copy?: boolean }) {
   const school = education[chapter];
   if (!school) return null;
   const tab = copy ? -1 : undefined;
@@ -138,11 +138,6 @@ function BookRight({ chapter, onChapter, copy }: { chapter: number; onChapter: (
       </section>}
       <div className="ruled-paper" />
     </div>
-    <div className="book-pagination">
-      <button type="button" tabIndex={tab} aria-label="Previous school chapter" disabled={chapter === 0} onClick={() => onChapter(chapter - 1)}><ArrowLeft /></button>
-      <span>{chapter + 1} / {education.length}</span>
-      <button type="button" tabIndex={tab} aria-label="Next school chapter" disabled={chapter === education.length - 1} onClick={() => onChapter(chapter + 1)}><ArrowRight /></button>
-    </div>
   </>;
 }
 
@@ -154,22 +149,32 @@ function BookRight({ chapter, onChapter, copy }: { chapter: number; onChapter: (
  * page faces the viewer in every frame instead of going edge-on and vanishing.
  */
 /** One half of the turning leaf, front (a chapter) and back (the index page), both inert copies. */
+/** Page zoom on phones: while one page is zoomed, a tap on the other page's visible edge switches to it. */
+type PageZoom = { focus?: number | null; onFocus?: (page: number) => void };
+function peek(page: number, { focus, onFocus }: PageZoom) {
+  if (focus == null || focus === page || !onFocus) return {};
+  return {
+    className: 'is-peek',
+    onClickCapture: (event: MouseEvent) => { event.preventDefault(); event.stopPropagation(); onFocus(page); },
+  };
+}
+const pageClass = (base: string, page: number, zoom: PageZoom) => `${base} ${peek(page, zoom).className ?? ''}`.trim();
+
 function leafFaces(right: number, left: number, half: 'inner' | 'outer') {
-  const noop = () => {};
   return <>
-    <div className={`book-page book-right leaf-front is-${half}`}><BookRight chapter={right} onChapter={noop} copy /></div>
-    <div className={`book-page book-left leaf-back is-${half}`}><BookLeft chapter={left} onChapter={noop} copy /></div>
+    <div className={`book-page book-right leaf-front is-${half}`}><BookRight chapter={right} copy /></div>
+    <div className={`book-page book-left leaf-back is-${half}`}><BookLeft chapter={left} /></div>
   </>;
 }
 
-export function BookSpread() {
-  const [chapter, setChapter] = useState(0);
+/** The chapter is chosen in the reading controls below the book; a change turns the leaf. */
+export function BookSpread({ chapter, ...zoom }: PageZoom & { chapter: number }) {
+  const [shown, setShown] = useState(chapter);
   const [turn, setTurn] = useState<Turn | null>(null);
-  const go = (to: number) => {
-    if (turn || to === chapter || to < 0 || to >= education.length) return;
-    if (!reducedMotion()) setTurn({ from: chapter, to });
-    setChapter(to);
-  };
+  if (shown !== chapter) {
+    setShown(chapter);
+    setTurn(reducedMotion() ? null : { from: shown, to: chapter });
+  }
   useEffect(() => {
     if (!turn) return;
     const t = window.setTimeout(() => setTurn(null), TURN_MS + 50);
@@ -183,9 +188,9 @@ export function BookSpread() {
   const left = turn && forward ? turn.from : chapter;
   const leafLeft = turn && !forward ? turn.from : chapter;
   return <Region label="My school history" className="book-spread">
-    <div className="book-page book-left"><BookLeft chapter={left} onChapter={go} /></div>
-    <div className="book-page book-right"><BookRight chapter={right} onChapter={go} /></div>
-    {turn && <div className={`book-leaf ${forward ? 'is-forward' : 'is-backward'}`} aria-hidden="true" inert style={{ '--turn': `${TURN_MS}ms` } as CSSProperties}>
+    <div className={pageClass('book-page book-left', 0, zoom)} onClickCapture={peek(0, zoom).onClickCapture}><BookLeft chapter={left} /></div>
+    <div className={pageClass('book-page book-right', 1, zoom)} onClickCapture={peek(1, zoom).onClickCapture}><BookRight chapter={right} /></div>
+    {turn && <div key={`${turn.from}-${turn.to}`} className={`book-leaf ${forward ? 'is-forward' : 'is-backward'}`} aria-hidden="true" inert style={{ '--turn': `${TURN_MS}ms` } as CSSProperties}>
       {leafFaces(forward ? turn.from : turn.to, leafLeft, 'inner')}
       <div className="leaf-fold">{leafFaces(forward ? turn.from : turn.to, leafLeft, 'outer')}</div>
     </div>}
@@ -227,9 +232,9 @@ export function TagContent({ index, focused, onFocus }: { index: number; focused
   </Region>;
 }
 
-export function NotebookSpread() {
+export function NotebookSpread(zoom: PageZoom) {
   return <Region label="About me" className="notebook-spread">
-    <div className="note-page note-left"><span className="note-mark">{profile.monogram}.</span><h2>About me</h2><NotebookDoodles cover /><small>{about.coverNote}</small></div>
-    <div className="note-page note-right"><h2>{about.greeting}</h2>{about.paragraphs.map(text => <p key={text}>{text}</p>)}<NotebookDoodles /><div className="ruled-paper" /></div>
+    <div className={pageClass('note-page note-left', 0, zoom)} onClickCapture={peek(0, zoom).onClickCapture}><span className="note-mark">{profile.monogram}.</span><h2>About me</h2><NotebookDoodles cover /><small>{about.coverNote}</small></div>
+    <div className={pageClass('note-page note-right', 1, zoom)} onClickCapture={peek(1, zoom).onClickCapture}><h2>{about.greeting}</h2>{about.paragraphs.map(text => <p key={text}>{text}</p>)}<NotebookDoodles /><div className="ruled-paper" /></div>
   </Region>;
 }

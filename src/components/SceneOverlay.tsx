@@ -1,13 +1,18 @@
-import { ArrowLeft, ChevronLeft, ChevronRight, LayoutGrid, Maximize2, Minus, Plus, Printer, RotateCcw } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, LayoutGrid, Maximize2, Minus, Plus, Printer, RotateCcw, ZoomIn, ZoomOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { corners, type Corner } from '@/lib/portfolio';
-import { achievements, hobbies, experience, resume } from '@/personal';
+import { achievements, education, hobbies, experience, resume } from '@/personal';
 
 /* DOM controls layered over the cabin. Kept outside the scene JSX runtime so ARIA props survive. */
 type Props = {
   active: Corner | null;
   ready: boolean;
+  /** Phone layout: the books show their whole spread and offer a zoom onto each page. */
+  narrow: boolean;
   detail: number | null;
+  /** School book chapter, turned from the controls below the book (the pages carry no controls). */
+  chapter: number;
+  onChapter: (chapter: number) => void;
   onDetail: (detail: number | null) => void;
   onClose: () => void;
   onZoom: (step: number) => void;
@@ -15,13 +20,16 @@ type Props = {
   onFullscreen: () => void;
 };
 
-export function SceneOverlay({ active, ready, detail, onDetail, onClose, onZoom, onReset, onFullscreen }: Props) {
+export function SceneOverlay({ active, ready, narrow, detail, chapter, onChapter, onDetail, onClose, onZoom, onReset, onFullscreen }: Props) {
   if (!active) return <div className="scene-controls">
     <Button variant="ghost" size="icon" aria-label="Zoom in" title="Zoom in" onClick={() => onZoom(1)}><Plus /></Button>
     <Button variant="ghost" size="icon" aria-label="Zoom out" title="Zoom out" onClick={() => onZoom(-1)}><Minus /></Button>
     <Button variant="ghost" size="icon" aria-label="Reset view" title="Reset view" onClick={onReset}><RotateCcw /></Button>
     <Button variant="ghost" size="icon" aria-label="Fullscreen" title="Fullscreen" onClick={onFullscreen}><Maximize2 /></Button>
   </div>;
+  const book = active === 'studies';
+  // Phones show both pages of a book; zoom goes to the left page, a tap on the other page moves it there.
+  const zoomable = narrow && (book || active === 'about');
   const labels = active === 'achievements' ? achievements.map(a => a.title) : active === 'hobbies' ? hobbies.map(h => h.title) : active === 'experience' ? experience.map(j => j.organization ?? j.title) : null;
   const whole = active === 'achievements' || active === 'experience' ? 'Whole board' : 'All gear';
   const unit = active === 'achievements' ? 'photo' : active === 'experience' ? 'experience' : 'tag';
@@ -38,6 +46,14 @@ export function SceneOverlay({ active, ready, detail, onDetail, onClose, onZoom,
       {active === 'experience' && detail !== null && experience[detail]?.projectUrl && <a className="experience-project-link" href={experience[detail].projectUrl} target="_blank" rel="noopener noreferrer">View project ↗</a>}
     </div>
     <p className="sr-only" aria-live="polite">{ready ? `${name} is open.` : `Opening ${name}…`}</p>
+    {(book || zoomable) && <div className="detail-stepper" role="group" aria-label={book ? 'School chapters' : 'Notebook zoom'}>
+      {book && <>
+        <Button variant="ghost" size="icon" aria-label="Previous chapter" disabled={chapter === 0} onClick={() => onChapter(chapter - 1)}><ChevronLeft /></Button>
+        <span className="chapter-count" aria-live="polite" aria-label={`Chapter ${chapter + 1} of ${education.length}: ${education[chapter]?.title ?? ''}`}>{chapter + 1} / {education.length}</span>
+        <Button variant="ghost" size="icon" aria-label="Next chapter" disabled={chapter === education.length - 1} onClick={() => onChapter(chapter + 1)}><ChevronRight /></Button>
+      </>}
+      {zoomable && <Button variant="ghost" size="icon" aria-pressed={detail !== null} aria-label={detail === null ? 'Zoom in' : 'Zoom out'} title={detail === null ? 'Zoom in' : 'Zoom out'} onClick={() => onDetail(detail === null ? 0 : null)}>{detail === null ? <ZoomIn /> : <ZoomOut />}</Button>}
+    </div>}
     {labels && <div className="detail-stepper" role="group" aria-label={active === 'achievements' ? 'Photos on the board' : active === 'experience' ? 'Work experience focus' : 'Gear tags'}>
       <Button variant="ghost" size="icon" aria-label={`Previous ${unit}`} onClick={() => step(-1)}><ChevronLeft /></Button>
       <span>{detail === null ? whole : labels[detail]}</span>

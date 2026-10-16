@@ -33,7 +33,8 @@ describe('reading surfaces', () => {
         const face = primaryFace(corner, corner === 'hobbies' ? detail ?? 0 : 0);
         const cssScale = face.width * view.zoom / face.pixels[0];
         // Desktop surfaces render near their design size; phones get larger surface type (CSS) at lower scale.
-        expect(cssScale).toBeGreaterThan(narrow ? .28 : .55);
+        // The school book shows its whole spread on phones (both pages), so it sits a little smaller.
+        expect(cssScale).toBeGreaterThan(narrow ? (corner === 'studies' ? .25 : .28) : .55);
       }
     }
   });

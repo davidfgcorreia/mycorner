@@ -113,7 +113,7 @@ function applyHinge(hinge: THREE.Group | null, spine: THREE.Group | null, angle:
   if (spine) spine.scale.z = Math.max(.001, -Math.cos(angle));
 }
 
-export function SchoolBook({ ready, portal, onSelect, motion }: Shared & { motion: Motion }) {
+export function SchoolBook({ ready, portal, onSelect, motion, detail, onDetail, chapter }: Shared & { motion: Motion; detail: number | null; onDetail: (detail: number | null) => void; chapter: number }) {
   const c = useSceneColors();
   const root = useRef<THREE.Group>(null), hinge = useRef<THREE.Group>(null), spine = useRef<THREE.Group>(null);
   const rest = useMemo(() => bookPose(0), []);
@@ -128,11 +128,11 @@ export function SchoolBook({ ready, portal, onSelect, motion }: Shared & { motio
   });
   return <group ref={root} position={rest.position} rotation={rest.rotation} {...pick(() => onSelect('studies'))}>
     <BookBody size={schoolBook.size} coverColor={c.green} left={left} right={right} label={label} hinge={hinge} spine={spine} />
-    {ready && <SurfaceHtml face={primaryFace('studies')} portal={portal} className="surface-book"><BookSpread /></SurfaceHtml>}
+    {ready && <SurfaceHtml face={primaryFace('studies')} portal={portal} className="surface-book"><BookSpread chapter={chapter} focus={detail} onFocus={onDetail} /></SurfaceHtml>}
   </group>;
 }
 
-export function AboutNotebook({ ready, portal, onSelect, motion }: Shared & { motion: Motion }) {
+export function AboutNotebook({ ready, portal, onSelect, motion, detail, onDetail }: Shared & { motion: Motion; detail: number | null; onDetail: (detail: number | null) => void }) {
   const c = useSceneColors();
   const hinge = useRef<THREE.Group>(null), spine = useRef<THREE.Group>(null);
   const left = useCanvasTexture(262, 350, drawNotebookLeft, c);
@@ -141,7 +141,7 @@ export function AboutNotebook({ ready, portal, onSelect, motion }: Shared & { mo
   useFrame(() => applyHinge(hinge.current, spine.current, notebookHinge(motion.progress.about)));
   return <group position={notebook.placement.position} rotation={notebook.placement.rotation} {...pick(() => onSelect('about'))}>
     <BookBody size={notebook.size} coverColor={c.orange} left={left} right={right} label={label} hinge={hinge} spine={spine} />
-    {ready && <SurfaceHtml face={primaryFace('about')} portal={portal} className="surface-notebook"><NotebookSpread /></SurfaceHtml>}
+    {ready && <SurfaceHtml face={primaryFace('about')} portal={portal} className="surface-notebook"><NotebookSpread focus={detail} onFocus={onDetail} /></SurfaceHtml>}
   </group>;
 }
 
@@ -225,16 +225,16 @@ export function HobbyTags({ ready, portal, onSelect, detail, onDetail }: Shared 
   return <>{tags.map(({ id, face, rotation, string }, i) => <HobbyTagMesh key={id} index={i} face={face} rotation={rotation} string={string} ready={ready} portal={portal} onSelect={onSelect} focused={detail === i} onFocus={() => onDetail(i)} />)}</>;
 }
 
-export function ReadingObjects({ active, ready, detail, motion, portal, onSelect, onDetail }: { active: Corner | null; ready: boolean; detail: number | null; motion: Motion; portal: RefObject<HTMLDivElement | null>; onSelect: Select; onDetail: (detail: number | null) => void }) {
+export function ReadingObjects({ active, ready, detail, chapter, motion, portal, onSelect, onDetail }: { active: Corner | null; ready: boolean; detail: number | null; chapter: number; motion: Motion; portal: RefObject<HTMLDivElement | null>; onSelect: Select; onDetail: (detail: number | null) => void }) {
   const live = (corner: Corner) => ready && active === corner;
   const shared = { portal, onSelect };
   return <>
     <Monitor ready={live('projects')} {...shared} />
     <PrinterWithSheet ready={live('resume')} motion={motion} {...shared} />
-    <SchoolBook ready={live('studies')} motion={motion} {...shared} />
+    <SchoolBook ready={live('studies')} motion={motion} detail={detail} onDetail={onDetail} chapter={chapter} {...shared} />
     <AchievementBoard ready={live('achievements')} detail={detail} onDetail={onDetail} {...shared} />
     <WorkJournal ready={live('experience')} detail={detail} onDetail={onDetail} {...shared} />
     <HobbyTags ready={live('hobbies')} detail={detail} onDetail={onDetail} {...shared} />
-    <AboutNotebook ready={live('about')} motion={motion} {...shared} />
+    <AboutNotebook ready={live('about')} motion={motion} detail={detail} onDetail={onDetail} {...shared} />
   </>;
 }
