@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import type { Corner } from '@/lib/portfolio';
 import { achievements, hobbies } from '@/personal';
 import { board, boardCards, boardNote, boardRect, bookPose, cardLayout, hobbyTags, journal, monitor, notebook, notebookHinge, primaryFace, printer, readingObjects, rectMatrix, schoolBook, sheet, sheetPose, surfaceScale, tag, type BookSize, type Face, type Vec } from '@/lib/reading-surfaces';
-import { BoardContent, BookSpread, JournalContent, NotebookSpread, ResumeContent, ScreenContent, TagContent } from '@/components/ReadingContent';
+import { BoardContent, BookSpread, JournalContent, NotebookSpread, ResumeContent, ScreenContent, ScreenLogo, TagContent } from '@/components/ReadingContent';
 import { useSceneColors } from './colors';
 import { RefreshShadows } from './frames';
 import { drawBookIndex, drawBookText, drawAchievementCard, drawCork, drawCoverLabel, drawJournal, drawBoardNote, drawNotebookLeft, drawNotebookRight, drawResume, drawHobbyTag, paperMaterial, useCanvasTexture } from './textures';
@@ -43,10 +43,10 @@ function SurfaceHtml({ face, portal, className, children }: { face: Face; portal
   </Html>;
 }
 
-export function Monitor({ ready, portal, onSelect }: Shared) {
+export function Monitor({ ready, portal, onSelect, off, onPowerOff }: Shared & { off: boolean; onPowerOff: () => void }) {
   return <group position={monitor.placement.position} rotation={monitor.placement.rotation} {...pick(() => onSelect('projects'))}>
-    {/* The overview uses only the monitor model; readable content mounts after zoom settles. */}
-    {ready && <SurfaceHtml face={primaryFace('projects')} portal={portal} className="surface-screen"><ScreenContent /></SurfaceHtml>}
+    {/* The overview uses only the monitor model; readable content (logo, then the desktop) mounts after zoom settles. */}
+    {ready && <SurfaceHtml face={primaryFace('projects')} portal={portal} className="surface-screen"><ScreenLogo /><ScreenContent off={off} onPowerOff={onPowerOff} /></SurfaceHtml>}
   </group>;
 }
 
@@ -225,11 +225,11 @@ export function HobbyTags({ ready, portal, onSelect, detail, onDetail }: Shared 
   return <>{tags.map(({ id, face, rotation, string }, i) => <HobbyTagMesh key={id} index={i} face={face} rotation={rotation} string={string} ready={ready} portal={portal} onSelect={onSelect} focused={detail === i} onFocus={() => onDetail(i)} />)}</>;
 }
 
-export function ReadingObjects({ active, ready, detail, chapter, motion, portal, onSelect, onDetail }: { active: Corner | null; ready: boolean; detail: number | null; chapter: number; motion: Motion; portal: RefObject<HTMLDivElement | null>; onSelect: Select; onDetail: (detail: number | null) => void }) {
+export function ReadingObjects({ active, ready, detail, chapter, screenOff, motion, portal, onSelect, onDetail, onPowerOff }: { active: Corner | null; ready: boolean; detail: number | null; chapter: number; screenOff: boolean; onPowerOff: () => void; motion: Motion; portal: RefObject<HTMLDivElement | null>; onSelect: Select; onDetail: (detail: number | null) => void }) {
   const live = (corner: Corner) => ready && active === corner;
   const shared = { portal, onSelect };
   return <>
-    <Monitor ready={live('projects')} {...shared} />
+    <Monitor ready={live('projects')} off={screenOff} onPowerOff={onPowerOff} {...shared} />
     <PrinterWithSheet ready={live('resume')} motion={motion} {...shared} />
     <SchoolBook ready={live('studies')} motion={motion} detail={detail} onDetail={onDetail} chapter={chapter} {...shared} />
     <AchievementBoard ready={live('achievements')} detail={detail} onDetail={onDetail} {...shared} />

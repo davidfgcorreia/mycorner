@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react';
-import { ArrowLeft, BookOpen, Folder, Home, Monitor } from 'lucide-react';
+import { ArrowLeft, BookOpen, Folder, Home, Monitor, X } from 'lucide-react';
 import { about, achievementBoard, achievements, education, educationNote, experience, hobbies, profile, projects, resume, tagNote, type ResumeEntry } from '@/personal';
 import { boardCards, boardNote, type BoardItem } from '@/lib/board-layout';
 import { ProjectPage } from './ProjectPage';
 import { journalEntry } from '@/lib/journal-layout';
 import { NotebookDoodles } from './NotebookDoodles';
+import { archLogoPath } from '@/lib/screen-logo';
 
 /*
  * Readable content for the physical surfaces in the cabin. Each component fills exactly
@@ -20,7 +21,13 @@ const categories = ['All projects', ...new Set(projects.map(p => p.category))];
 const home = `/home/${profile.firstName.toLowerCase()}/projects`;
 const slug = (name: string) => name.toLowerCase().replaceAll(' ', '-');
 
-export function ScreenContent() {
+/** The screen's resting picture, seen while it powers on and after it powers off. */
+export function ScreenLogo() {
+  return <div className="screen-logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d={archLogoPath} /></svg></div>;
+}
+
+/** `off` plays the power-off; the red title-bar button asks for it. */
+export function ScreenContent({ off, onPowerOff }: { off: boolean; onPowerOff: () => void }) {
   const [selected, setSelected] = useState<number | null>(null);
   const [filter, setFilter] = useState('All projects');
   const folderButtons = useRef<Map<number, HTMLButtonElement>>(new Map());
@@ -32,9 +39,9 @@ export function ScreenContent() {
     setSelected(null);
     requestAnimationFrame(() => { if (previous !== null) folderButtons.current.get(previous)?.focus({ preventScroll: true }); });
   };
-  return <Region label={`File Manager — ${profile.firstName}’s projects`} className="os-screen">
+  return <Region label={`File Manager — ${profile.firstName}’s projects`} className={`os-screen ${off ? 'is-off' : ''}`}>
     <div className={`os-window ${project ? 'os-project-open' : ''}`}>
-      <div className="os-title"><Monitor aria-hidden="true" /><span>File Manager — {home}</span><i aria-hidden="true"><b /><b /><b /></i></div>
+      <div className="os-title"><Monitor aria-hidden="true" /><span>File Manager — {home}</span><i><b aria-hidden="true" /><b aria-hidden="true" /><button type="button" className="os-close" aria-label="Turn off the computer" title="Close" onClick={onPowerOff}><X aria-hidden="true" /></button></i></div>
       <div className="os-menu" aria-hidden="true"><span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Bookmarks</span><span>Help</span></div>
       <div className="os-toolbar">
         <button type="button" aria-label="Back to projects" disabled={!project} onClick={back}><ArrowLeft /></button>

@@ -20,6 +20,9 @@ import booksUrl from '@/assets/models/books.glb?url';
 import plantUrl from '@/assets/models/plantSmall1.glb?url';
 import tallPlantUrl from '@/assets/models/pottedPlant.glb?url';
 
+/** Length of the monitor's power-off animation (`screen-off` in styles.css). */
+const SCREEN_OFF_MS = 500;
+
 const CORNERS: Corner[] = ['projects', 'studies', 'achievements', 'hobbies', 'about', 'resume', 'experience'];
 
 function pickable(onClick?: () => void) {
@@ -264,10 +267,13 @@ export function CabinScene({ active, onSelect, onClose }: { active: Corner | nul
   const [shownActive, setShownActive] = useState(active);
   // School book chapter, chosen in the reading controls; the book opens on the first one.
   const [chapter, setChapter] = useState(0);
+  // Leaving the computer first powers the screen off; the room comes back when it has.
+  const [screenOff, setScreenOff] = useState(false);
   if (shownActive !== active) {
     // Selection changed: content waits for the new motion to settle, orbiting waits for the room.
     setShownActive(active);
     setChapter(0);
+    setScreenOff(false);
     setReadyCorner(null);
     if (active) setOrbitReady(false);
     if (view.corner !== active) setView({ corner: null, detail: null });
@@ -281,9 +287,18 @@ export function CabinScene({ active, onSelect, onClose }: { active: Corner | nul
 
   const select = useCallback<Select>((corner, d) => { setView({ corner, detail: d ?? defaultDetail(corner, narrow) }); onSelect(corner); }, [narrow, onSelect]);
   const setDetail = useCallback((d: number | null) => setView({ corner: active, detail: d }), [active]);
+  const close = useCallback(() => {
+    if (active !== 'projects' || !ready || prefersReducedMotion()) onClose();
+    else setScreenOff(true);
+  }, [active, ready, onClose]);
+  useEffect(() => {
+    if (!screenOff) return;
+    const t = window.setTimeout(onClose, SCREEN_OFF_MS);
+    return () => window.clearTimeout(t);
+  }, [screenOff, onClose]);
   const settle = useCallback((corner: Corner | null) => { if (corner) setReadyCorner(corner); else setOrbitReady(true); }, []);
 
-  useEffect(() => { const close = (event: KeyboardEvent) => { if (event.key === 'Escape') onClose(); }; window.addEventListener('keydown', close); return () => window.removeEventListener('keydown', close); }, [onClose]);
+  useEffect(() => { const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') close(); }; window.addEventListener('keydown', onKey); return () => window.removeEventListener('keydown', onKey); }, [close]);
   useEffect(() => {
     document.body.style.cursor = 'auto';
     if (active) {
@@ -306,12 +321,12 @@ export function CabinScene({ active, onSelect, onClose }: { active: Corner | nul
       <directionalLight position={[-3, 8, 5]} intensity={2.3} castShadow shadow-mapSize={[1024, 1024]} shadow-camera-left={-6} shadow-camera-right={6} shadow-camera-top={6} shadow-camera-bottom={-6} shadow-bias={-.001} />
       <StudioEnvironment />
       <Room onSelect={select} />
-      <ReadingObjects active={active} ready={ready} detail={detail} chapter={chapter} motion={motion} portal={portal} onSelect={select} onDetail={setDetail} />
+      <ReadingObjects active={active} ready={ready} detail={detail} chapter={chapter} screenOff={screenOff} onPowerOff={close} motion={motion} portal={portal} onSelect={select} onDetail={setDetail} />
       {!active && <Markers onSelect={select} />}
       {!active && orbitReady && <OrbitControls makeDefault target={rig.roomLook} enablePan={false} enableDamping minPolarAngle={.55} maxPolarAngle={1.3} minAzimuthAngle={-.25} maxAzimuthAngle={1.25} minZoom={35} maxZoom={160} />}
     </Canvas>
     <div className="surface-portal" ref={portal} />
-    <SceneOverlay active={active} ready={ready} narrow={narrow} detail={detail} chapter={chapter} onChapter={setChapter} onDetail={setDetail} onClose={onClose}
+    <SceneOverlay active={active} ready={ready} narrow={narrow} detail={detail} chapter={chapter} onChapter={setChapter} onDetail={setDetail} onClose={close}
       onZoom={step => setZoom(v => Math.min(1.6, Math.max(.7, v + step * .15)))}
       onReset={() => { setZoom(1.12); setOrbitReady(false); setReset(v => v + 1); }}
       onFullscreen={() => { if (document.fullscreenElement) void document.exitFullscreen(); else void container.current?.requestFullscreen(); }} />

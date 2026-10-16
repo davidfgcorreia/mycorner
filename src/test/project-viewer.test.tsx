@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { ScreenContent } from "@/components/ReadingContent";
 import { ProjectPage } from "@/components/ProjectPage";
 import type { Project } from "@/personal";
@@ -21,6 +21,12 @@ const project: Project = {
 };
 
 describe("Computer project viewer", () => {
+  it("asks to power off from the red title-bar button", () => {
+    const onPowerOff = vi.fn();
+    render(<ScreenContent off={false} onPowerOff={onPowerOff} />);
+    fireEvent.click(screen.getByRole("button", { name: "Turn off the computer" }));
+    expect(onPowerOff).toHaveBeenCalledOnce();
+  });
   it("mounts a recorded demo only when selected and removes it on leaving the preview", () => {
     render(
       <ProjectPage
@@ -42,7 +48,7 @@ describe("Computer project viewer", () => {
     expect(screen.queryByLabelText("Test site demo")).not.toBeInTheDocument();
   });
   it("opens real project media, resets the view when reopened, and restores folder focus", async () => {
-    render(<ScreenContent />);
+    render(<ScreenContent off={false} onPowerOff={() => {}} />);
     fireEvent.click(screen.getByRole("button", { name: "Cascais Micromobility Web app" }));
     expect(screen.getByRole("heading", { name: "Cascais Micromobility" })).toHaveFocus();
     expect(screen.queryByTitle("Cascais Micromobility demo")).not.toBeInTheDocument();
