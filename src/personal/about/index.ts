@@ -6,6 +6,8 @@ export const about = {
     'Lisbon keeps me moving. Back home in Maragota, I slow down: nature, the beach, and room to breathe.',
     'I value kindness, good company, and the small moments that make an ordinary day feel full.',
   ],
+  /** Precedes the email address (from `profile.contact.email`) on the right page. */
+  contactLabel: 'Say hello:',
   /** Shown on the notebook’s left page. */
   coverNote: 'A little progress. A little sea air.',
 };

@@ -88,11 +88,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${profile.site}/` },
       { property: "og:site_name", content: profile.name },
-      { name: "twitter:card", content: "summary" },
+      { property: "og:image", content: `${profile.site}/social-card.png` },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      {
+        property: "og:image:alt",
+        content:
+          "David Correia — Software Engineer, Cybersecurity and Distributed Systems, IST Lisbon",
+      },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: `${profile.site}/social-card.png` },
     ],
     scripts: [{ type: "application/ld+json", children: personJsonLd() }],
     links: [
-      { rel: "canonical", href: `${profile.site}/` },
+      {
+        rel: "alternate",
+        type: "text/plain",
+        href: "/llms.txt",
+        title: "Plain-text site information",
+      },
       {
         rel: "stylesheet",
         href: appCss,
@@ -101,7 +115,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Courier+Prime:wght@400;700&family=DM+Sans:wght@400;500;600;700&family=EB+Garamond:wght@400;500;600&family=Kalam:wght@400;700&family=Patrick+Hand&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=Courier+Prime:wght@400;700&family=DM+Sans:wght@400;500;600;700&family=EB+Garamond:wght@400;500;600&family=Kalam:wght@400;700&family=Patrick+Hand&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,

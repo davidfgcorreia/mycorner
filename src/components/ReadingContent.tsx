@@ -242,6 +242,6 @@ export function TagContent({ index, focused, onFocus }: { index: number; focused
 export function NotebookSpread(zoom: PageZoom) {
   return <Region label="About me" className="notebook-spread">
     <div className={pageClass('note-page note-left', 0, zoom)} onClickCapture={peek(0, zoom).onClickCapture}><span className="note-mark">{profile.monogram}.</span><h2>About me</h2><NotebookDoodles cover /><small>{about.coverNote}</small></div>
-    <div className={pageClass('note-page note-right', 1, zoom)} onClickCapture={peek(1, zoom).onClickCapture}><h2>{about.greeting}</h2>{about.paragraphs.map(text => <p key={text}>{text}</p>)}<NotebookDoodles /><div className="ruled-paper" /></div>
+    <div className={pageClass('note-page note-right', 1, zoom)} onClickCapture={peek(1, zoom).onClickCapture}><h2>{about.greeting}</h2>{about.paragraphs.map(text => <p key={text}>{text}</p>)}<p className="note-contact">{about.contactLabel} <a href={`mailto:${profile.contact.email}`}>{profile.contact.email}</a></p><NotebookDoodles /><div className="ruled-paper" /></div>
   </Region>;
 }

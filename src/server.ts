@@ -2,6 +2,8 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
+import { crawlerContent } from "./lib/crawler-content";
+import { canonicalRedirect, secureResponse } from "./lib/transport-security";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -46,22 +48,34 @@ function isH3SwallowedErrorBody(body: string): boolean {
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
-    // One address for search engines: www.example.com → example.com.
+    const redirect = canonicalRedirect(request);
+    if (redirect) return secureResponse(request, redirect);
     const url = new URL(request.url);
-    if (url.hostname.startsWith("www.")) {
-      url.hostname = url.hostname.slice(4);
-      return Response.redirect(url.toString(), 301);
+    if (url.pathname === "/llms.txt") {
+      return secureResponse(
+        request,
+        new Response(request.method === "HEAD" ? null : crawlerContent(), {
+          headers: {
+            "Content-Type": "text/plain; charset=utf-8",
+            // For AI tools to read, not for search results.
+            "X-Robots-Tag": "noindex",
+          },
+        }),
+      );
     }
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      return secureResponse(request, await normalizeCatastrophicSsrResponse(response));
     } catch (error) {
       console.error(error);
-      return new Response(renderErrorPage(), {
-        status: 500,
-        headers: { "content-type": "text/html; charset=utf-8" },
-      });
+      return secureResponse(
+        request,
+        new Response(renderErrorPage(), {
+          status: 500,
+          headers: { "content-type": "text/html; charset=utf-8" },
+        }),
+      );
     }
   },
 };

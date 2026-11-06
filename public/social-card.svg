@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f4f1e8"/>
+  <rect x="36" y="36" width="1128" height="558" rx="20" fill="#e2efdc" stroke="#42643c" stroke-width="2"/>
+  <circle cx="108" cy="111" r="30" fill="#42643c"/>
+  <text x="108" y="121" text-anchor="middle" font-family="DejaVu Sans, sans-serif" font-size="27" fill="#ffffff">dc</text>
+  <g font-family="DejaVu Sans, sans-serif" fill="#233d25">
+    <text x="78" y="240" font-size="74" font-weight="bold">David Correia</text>
+    <text x="80" y="308" font-size="33">Software Engineer</text>
+    <text x="80" y="365" font-size="28">Cybersecurity &amp; Distributed Systems</text>
+    <text x="80" y="419" font-size="24">Master’s student · Instituto Superior Técnico (IST)</text>
+    <text x="80" y="460" font-size="24">Lisbon, Portugal</text>
+    <text x="80" y="550" font-size="25">davidfcorreia.com</text>
+  </g>
+</svg>

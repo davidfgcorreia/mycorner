@@ -507,6 +507,8 @@ main { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 .note-right h2 { margin: 0 0 14px; font-size: 52px; font-weight: 600; line-height: 1.05; }
 .note-right p { margin: 0; font-size: 30px; line-height: 1.25; color: var(--muted-foreground); }
 .note-right p + p { margin-top: 16px; }
+.note-right .note-contact { margin-top: 22px; color: var(--foreground); }
+.note-contact a { color: var(--primary); text-decoration: underline; text-underline-offset: 4px; overflow-wrap: anywhere; }
 .notebook-doodle { display: block; flex-shrink: 0; width: 100%; color: var(--scene-ink); opacity: .78; }
 .notebook-doodle.is-cover { height: 300px; margin-top: 32px; transform: rotate(-2deg); }
 .notebook-doodle.is-margin { height: 90px; margin-top: 18px; }
@@ -564,6 +566,26 @@ main { display: flex; flex-direction: column; flex: 1; min-height: 0; }
   .resume-sheet h2 { font-size: 40px; }
   .resume-sheet h3 { font-size: 19px; }
   .resume-sheet p, .resume-sheet li { font-size: 16px; }
+}
+
+.public-profile { max-width: 850px; margin: 0 auto; padding: 40px 24px 64px; font-family: 'DM Sans', sans-serif; line-height: 1.75; color: var(--foreground); overflow-wrap: anywhere; }
+.public-profile nav { display: flex; flex-wrap: wrap; gap: 12px 24px; }
+.public-profile a { color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
+.public-profile a:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+.public-profile header, .public-profile section, .public-profile footer { margin-top: 36px; }
+.public-profile h1 { font-size: clamp(2rem, 7vw, 3.5rem); line-height: 1.2; }
+.public-profile h2 { font-size: 1.6rem; margin-bottom: 16px; }
+.public-profile h3 { font-size: 1.15rem; font-weight: 600; }
+.public-profile article { margin: 24px 0; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+.public-profile p { margin: 12px 0; }
+.public-profile ul { padding-left: 24px; list-style: disc; }
+.public-profile section { scroll-margin-top: 24px; }
+.profile-lead { font-size: 1.2rem; }
+.profile-header { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 28px; align-items: start; }
+.profile-portrait { display: block; width: 100%; height: auto; border-radius: 12px; }
+@media (max-width: 600px) {
+  .profile-header { grid-template-columns: 1fr; gap: 20px; }
+  .profile-portrait { width: 160px; }
 }
 
 /* Printing uses a plain copy of the résumé instead of the transformed in-room sheet. */
