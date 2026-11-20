@@ -205,6 +205,7 @@ main { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 .tag-mark { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--primary); color: var(--primary-foreground); font-size: 13px; font-weight: 700; }
 .tag-text { display: flex; flex-direction: column; }
 .tag-text h1 { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.15; color: var(--card-foreground); }
+.tag-keywords { display: block; margin-bottom: 1px; white-space: nowrap; font-size: 10px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--muted-foreground); }
 .tag-text small { margin-top: 2px; font-size: 11px; color: var(--muted-foreground); }
 .about-pill { gap: 6px; padding: 0 16px; border: 1px solid var(--border); border-radius: 999px; background: color-mix(in oklch, var(--card) 70%, transparent); font-size: 13px; font-weight: 500; transition: transform .2s, background .2s, box-shadow .2s; animation: rise .6s ease-out .5s both; }
 .about-pill:hover { background: var(--card); transform: translateY(-1px); box-shadow: 0 6px 16px color-mix(in oklch, var(--foreground) 14%, transparent); }
@@ -251,7 +252,7 @@ main { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-delay: 0ms !important; transition-duration: 0.01ms !important; } }
 @media (max-width: 640px) {
   .site-header { padding: 12px 18px; }
-  .name-tag { padding: 7px 16px 7px 38px; gap: 9px; }.tag-mark { width: 28px; height: 28px; font-size: 11px; }.tag-text h1 { font-size: 14px; }.tag-text small { display: none; }
+  .name-tag { padding: 7px 16px 7px 38px; gap: 9px; }.tag-mark { width: 28px; height: 28px; font-size: 11px; }.tag-text h1 { font-size: 14px; }.tag-keywords { font-size: 9px; letter-spacing: .02em; }.tag-text small { display: none; }
   .about-pill { padding: 0 12px; font-size: 12px; }
   .scene-controls { right: 20px; bottom: 12px; }
   .corner-nav { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px 6px; padding: 0 12px; }

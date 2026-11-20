@@ -50,7 +50,9 @@ function Intro() {
   return (
     <div className="portfolio-page site-intro">
       <main className="intro-card">
-        <h1>{profile.name}</h1>
+        <h1>
+          {profile.siteKeywords} — {profile.name}
+        </h1>
         <p className="intro-role">
           {resume.role}
           {location && ` · ${location}`}
@@ -87,7 +89,11 @@ function Index() {
               {profile.monogram}
             </span>
             <span className="tag-text">
-              <h1>{profile.name}</h1>
+              <h1>
+                <span className="tag-keywords">{profile.siteKeywords}</span>
+                <span className="sr-only"> — </span>
+                {profile.name}
+              </h1>
               <small>{profile.role}</small>
             </span>
           </div>

@@ -12,7 +12,9 @@ export const profile = {
   monogram: "dc",
   /** One line under your name on the header badge. */
   role: "Maker · little corner of the internet",
-  siteTitle: "David Correia — Software Engineer & IST Master’s Student",
+  /** Search words shown before your name in the page heading and the browser tab. */
+  siteKeywords: "Personal Website · Site Pessoal",
+  siteTitle: "Personal Website · Site Pessoal — David Correia, Software Engineer",
   siteDescription:
     "David Correia’s personal website: software engineer focused on cybersecurity and distributed systems; second-year master’s student at Instituto Superior Técnico (IST), Lisbon, Portugal.",
   professionalFocus: "Cybersecurity and distributed systems",
