@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Suspense, lazy, useCallback, useState, type CSSProperties } from "react";
+import { Suspense, lazy, useCallback, useEffect, useState, type CSSProperties } from "react";
 import {
   ArrowUpRight,
   BookOpen,
@@ -21,7 +21,6 @@ const CabinScene = lazy(() =>
 );
 
 export const Route = createFileRoute("/")({
-  ssr: false,
   head: () => ({
     meta: [
       { title: profile.siteTitle },
@@ -33,9 +32,6 @@ export const Route = createFileRoute("/")({
     ],
     links: [{ rel: "canonical", href: `${profile.site}/` }],
   }),
-  // The cabin renders only in the browser; this is what the server sends instead, so search
-  // engines (and anyone waiting for the scripts) get real text and links.
-  pendingComponent: Intro,
   component: Index,
 });
 
@@ -79,6 +75,11 @@ function Index() {
   const [active, setActive] = useState<Corner | null>(null);
   const close = useCallback(() => setActive(null), []);
   const icons = [Monitor, BookOpen, Trophy, Waves, Printer, Folder];
+  // The cabin renders only in the browser. The server (and the first browser render, so hydration
+  // matches) sends the intro card instead: search engines get the heading, text and links.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return <Intro />;
   return (
     <div className="portfolio-page">
       <header className="site-header" inert={active !== null}>

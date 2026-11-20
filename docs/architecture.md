@@ -6,8 +6,9 @@ about me).
 
 ## Stack
 
-- **TanStack Start** (React 19, file-based routing) with Vite; the index route is client-only
-  (`ssr: false`) because WebGL and canvas textures need the browser.
+- **TanStack Start** (React 19, file-based routing) with Vite; the index route is
+  server-rendered as the intro card; the cabin mounts only in the browser (after a `mounted`
+  effect) because WebGL and canvas textures need it.
 - **Three.js** via **React Three Fiber** and a few **Drei** helpers (`OrbitControls`, `Html`,
   `RoundedBox`, `useTexture`).
 - **Tailwind CSS v4** for the base layer; almost all styling is hand-written CSS in
